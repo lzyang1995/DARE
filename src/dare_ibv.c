@@ -83,7 +83,7 @@ int dare_init_ib_device( uint32_t receive_count )
             exit(rc);
         }
 #ifdef lzyang
-        uint8_t *p = &(IBDEV->mygid);
+        uint8_t *p = (uint8_t *)&(IBDEV->mygid);
         printf("Local GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
 #endif
         if (NULL != IBDEV) {
