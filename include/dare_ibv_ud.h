@@ -60,6 +60,7 @@ struct reconf_rep_t {
 typedef struct reconf_rep_t reconf_rep_t;
 
 struct rc_syn_t {
+    union ibv_gid mygid;
     ud_hdr_t hdr;
     rem_mem_t log_rm;
     rem_mem_t ctrl_rm;
@@ -67,7 +68,6 @@ struct rc_syn_t {
     uint8_t idx;
     uint8_t size;
     uint8_t data[0];    // log & ctrl QPNs
-    union ibv_gid mygid;
 };
 typedef struct rc_syn_t rc_syn_t;
 

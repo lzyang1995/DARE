@@ -170,7 +170,7 @@ struct ibv_ah* ud_ah_create( uint16_t dlid )
      
     memset(&ah_attr, 0, sizeof(ah_attr));
      
-    ah_attr.is_global     = 1;
+    ah_attr.is_global     = 0;
     ah_attr.dlid          = dlid;
     ah_attr.sl            = 0;
     ah_attr.src_path_bits = 0;
