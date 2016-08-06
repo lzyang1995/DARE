@@ -4,6 +4,9 @@ DARE -- Direct Access REplication
 
 
 
+
+
+
 Brief: A wait-free direct access protocol that uses RDMA features such as QP disconnect and QP timeouts, to ensure highest performance and reliability.
 
 Build DARE
