@@ -11,7 +11,8 @@
  *            Nakul Vyas <mailnakul@gmail.com>
  * 
  */
- 
+#define lzyang 
+
 #ifndef DARE_IBV_UD_H
 #define DARE_IBV_UD_H
 
@@ -60,7 +61,9 @@ struct reconf_rep_t {
 typedef struct reconf_rep_t reconf_rep_t;
 
 struct rc_syn_t {
+#ifdef lzyang
     union ibv_gid mygid;
+#endif
     ud_hdr_t hdr;
     rem_mem_t log_rm;
     rem_mem_t ctrl_rm;

@@ -8,7 +8,8 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
- 
+#define lzyang
+
 #include <infiniband/verbs.h> /* OFED IB verbs */
 #include <dare.h>
  
@@ -88,7 +89,9 @@ typedef struct dare_ib_ep_t dare_ib_ep_t;
 
 struct dare_ib_device_t {
     /* General fields */
+#ifdef lzyang
     union ibv_gid mygid;
+#endif
     struct ibv_device *ib_dev;
     struct ibv_context *ib_dev_context;
     struct ibv_device_attr ib_dev_attr;

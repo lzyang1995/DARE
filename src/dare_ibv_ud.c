@@ -169,8 +169,11 @@ struct ibv_ah* ud_ah_create( uint16_t dlid )
     struct ibv_ah_attr ah_attr;
      
     memset(&ah_attr, 0, sizeof(ah_attr));
-     
+#ifdef lzyang
+    ah_attr.is_global     = 1;
+#else
     ah_attr.is_global     = 0;
+#endif
     ah_attr.dlid          = dlid;
     ah_attr.sl            = 0;
     ah_attr.src_path_bits = 0;
@@ -1483,7 +1486,9 @@ int ud_exchange_rc_info()
     request->ctrl_rm.rkey  = IBDEV->lcl_mr[CTRL_QP]->rkey;
     request->mtu           = IBDEV->mtu;
     request->idx           = SRV_DATA->config.idx;
+#ifdef lzyang
     request->mygid         = IBDEV->mygid;
+#endif
 
 //info(log_fp, "RC SYN: LOG MR=[%"PRIu64"; %"PRIu32"]; LOG MR=[%"PRIu64"; %"PRIu32"]\n",
 //     request->log_rm.raddr, request->log_rm.rkey, request->ctrl_rm.raddr, request->ctrl_rm.rkey);
