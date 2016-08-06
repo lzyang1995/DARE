@@ -47,6 +47,9 @@
 /* Endpoint UD info */
 struct ud_ep_t {
     uint16_t lid;
+#ifdef lzyang
+    union ibv_gid mygid;
+#endif
     uint32_t qpn;
     struct ibv_ah *ah;
 };
@@ -89,9 +92,6 @@ typedef struct dare_ib_ep_t dare_ib_ep_t;
 
 struct dare_ib_device_t {
     /* General fields */
-#ifdef lzyang
-    union ibv_gid mygid;
-#endif
     struct ibv_device *ib_dev;
     struct ibv_context *ib_dev_context;
     struct ibv_device_attr ib_dev_attr;
@@ -132,6 +132,9 @@ struct dare_ib_device_t {
     struct ibv_mr *snapshot_mr;
     
     int ulp_type;
+#ifdef lzyang
+    union ibv_gid mygid;
+#endif
     void *udata;
 };
 typedef struct dare_ib_device_t dare_ib_device_t;

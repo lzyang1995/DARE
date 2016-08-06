@@ -8,7 +8,8 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
- 
+#define lzyang
+
 #include <stdlib.h>
 
 #include <debug.h>
@@ -69,7 +70,11 @@ dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid )
     ep->wait_for_idx = 0;
     
     /* Create AH */
+#ifdef lzyang
+    ep->ud_ep.ah = ud_ah_create(&(ep->ud_ep));
+#else
     ep->ud_ep.ah = ud_ah_create(lid);
+#endif
     
 
     /* Add new node and rebalance tree. */

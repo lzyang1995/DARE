@@ -61,15 +61,15 @@ struct reconf_rep_t {
 typedef struct reconf_rep_t reconf_rep_t;
 
 struct rc_syn_t {
-#ifdef lzyang
-    union ibv_gid mygid;
-#endif
     ud_hdr_t hdr;
     rem_mem_t log_rm;
     rem_mem_t ctrl_rm;
     enum ibv_mtu mtu;
     uint8_t idx;
     uint8_t size;
+#ifdef lzyang
+    union ibv_gid mygid;
+#endif
     uint8_t data[0];    // log & ctrl QPNs
 };
 typedef struct rc_syn_t rc_syn_t;
@@ -88,7 +88,7 @@ int ud_init( uint32_t receive_count );
 int ud_start();
 void ud_shutdown();
 
-struct ibv_ah*  ud_ah_create( uint16_t dlid );
+struct ibv_ah*  ud_ah_create( ud_ep_t * ud_ep );
 void ud_ah_destroy( struct ibv_ah* ah );
 
 uint8_t ud_get_message();

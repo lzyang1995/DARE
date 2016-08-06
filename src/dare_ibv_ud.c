@@ -163,7 +163,7 @@ void ud_shutdown()
         
 }
 
-struct ibv_ah* ud_ah_create( uint16_t dlid )
+struct ibv_ah* ud_ah_create( ud_ep_t * ud_ep )
 {
     struct ibv_ah *ah = NULL;
     struct ibv_ah_attr ah_attr;
@@ -174,10 +174,14 @@ struct ibv_ah* ud_ah_create( uint16_t dlid )
 #else
     ah_attr.is_global     = 0;
 #endif
-    ah_attr.dlid          = dlid;
+    ah_attr.dlid          = ud_ep->lid;
     ah_attr.sl            = 0;
     ah_attr.src_path_bits = 0;
     ah_attr.port_num      = IBDEV->port_num;
+
+#ifdef lzyang
+    ah_attr.grh.dgid = ud_ep->mygid;
+#endif
 
     ah = ibv_create_ah(IBDEV->ud_pd, &ah_attr);
     if (NULL == ah) {
@@ -821,6 +825,7 @@ get_message:
         /* For UD: the number of bytes transferred is the 
            payload of the message plus the 40 bytes reserved 
            for the GRH */
+        
         ud_hdr = (ud_hdr_t*)(IBDEV->ud_recv_bufs[wc->wr_id] + 40);
         //debug(log_fp, "byte_len = %"PRIu32"\n", wc->byte_len);
         //debug(log_fp, "type = %"PRIu8"\n", ud_hdr->type);
@@ -1555,6 +1560,7 @@ handle_rc_syn(struct ibv_wc *wc, rc_syn_t *msg)
 #ifdef lzyang
         uint8_t *p = (uint8_t *)&(msg->mygid);
         printf("Remote GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
+        ep->ud_ep->mygid = msg->mygid;
 #endif
         /* Create UD endpoint from WC */
         wc_to_ud_ep(&ep->ud_ep, wc);
@@ -2486,7 +2492,7 @@ wc_to_ud_ep(ud_ep_t *ud_ep, struct ibv_wc *wc)
         /* AH already created - destroy to be on the safe side */
         ud_ah_destroy(ud_ep->ah);
     }
-    ud_ep->ah = ud_ah_create(ud_ep->lid);
+    ud_ep->ah = ud_ah_create(ud_ep);
     if (NULL == ud_ep->ah) {
         error_return(1, log_fp, "Cannot create AH for LID %"PRIu16"\n", 
                      ud_ep->lid);
