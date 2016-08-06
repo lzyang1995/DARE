@@ -8,6 +8,7 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
+#define lzyang
 
 #include <stdlib.h>
 #include <sys/types.h>
@@ -2060,8 +2061,9 @@ text(log_fp, "DISCONNECTED p%"PRIu8"\n", idx);
  * Connect a certain QP with a server: RESET->INIT->RTR->RTS
  * used for server arrivals
  */
-int rc_connect_server( uint8_t idx, int qp_id )
+int rc_connect_server( rc_syn_t *msg, int qp_id )
 {
+    uint8_t idx = msg->idx;
     int rc;
     struct ibv_qp_attr attr;
     struct ibv_qp_init_attr init_attr;
@@ -2294,11 +2296,21 @@ rc_qp_init_to_rtr( dare_ib_ep_t *ep, int qp_id )
     attr.rq_psn             = (LOG_QP == qp_id) ? LOG_PSN : CTRL_PSN;
 #endif    
     /* Note: this needs to modified for the lock; see rc_log_qp_lock */
+#ifdef lzyang
+    attr.ah_attr.is_global     = 1;
+#else
     attr.ah_attr.is_global     = 0;
+#endif
     attr.ah_attr.dlid          = ep->ud_ep.lid;
     attr.ah_attr.port_num      = IBDEV->port_num;
     attr.ah_attr.sl            = 0;
     attr.ah_attr.src_path_bits = 0;
+
+#ifdef lzyang
+    attr.ah_attr.grh.dgid = ep->ud_ep.mygid;
+    attr.ah_attr.grh.hop_limit = 1;
+    attr.ah_attr.grh.sgid_index = IBDEV->mygid;
+#endif
 
     rc = ibv_modify_qp(ep->rc_ep.rc_qp[qp_id].qp, &attr, 
                         IBV_QP_STATE | IBV_QP_PATH_MTU |

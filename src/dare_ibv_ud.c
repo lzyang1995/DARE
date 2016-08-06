@@ -1598,7 +1598,7 @@ handle_rc_syn(struct ibv_wc *wc, rc_syn_t *msg)
 
 
         /* Connect CTRL QP */ 
-        rc = rc_connect_server(msg->idx, CTRL_QP);
+        rc = rc_connect_server(msg, CTRL_QP);
         if (0 != rc) {
             error_return(1, log_fp, "Cannot connect server (CTRL)\n");
         }
@@ -1606,7 +1606,7 @@ handle_rc_syn(struct ibv_wc *wc, rc_syn_t *msg)
              SID_GET_IDX(SRV_DATA->ctrl_data->sid) == SRV_DATA->config.idx)
         {
             /* I'm the leader -- connect LOG QP */ 
-            rc = rc_connect_server(msg->idx, LOG_QP);
+            rc = rc_connect_server(msg, LOG_QP);
             if (0 != rc) {
                 error_return(1, log_fp, "Cannot connect server (LOG)\n");
             }
@@ -1696,7 +1696,7 @@ handle_rc_synack(struct ibv_wc *wc, rc_syn_t *msg)
 #endif 
 
         /* Connect only CTRL QP */ 
-        rc = rc_connect_server(msg->idx, CTRL_QP);
+        rc = rc_connect_server(msg, CTRL_QP);
         if (0 != rc) {
             error_return(1, log_fp, "Cannot connect server (CTRL)\n");
         }
@@ -1704,7 +1704,7 @@ handle_rc_synack(struct ibv_wc *wc, rc_syn_t *msg)
              SID_GET_IDX(SRV_DATA->ctrl_data->sid) == SRV_DATA->config.idx)
         {
             /* I'm the leader -- connect LOG QP */ 
-            rc = rc_connect_server(msg->idx, LOG_QP);
+            rc = rc_connect_server(msg, LOG_QP);
             if (0 != rc) {
                 error_return(1, log_fp, "Cannot connect server (LOG)\n");
             }
