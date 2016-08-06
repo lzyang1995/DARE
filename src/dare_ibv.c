@@ -10,7 +10,8 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
- 
+#define lzyang
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -74,6 +75,17 @@ int dare_init_ib_device( uint32_t receive_count )
     for (i = 0; i < num_devs; i++) {
         /* Init device */
         IBDEV = init_one_device(ib_devs[i]);
+#ifdef lzyang
+        union ibv_gid mygid;
+        int rc = ibv_query_gid(IBDEV->ib_dev_context, 0, 0, &mygid);
+        if(rc)
+        {
+            fprintf(stderr, "could not get gid for port 0, index 0\n");
+            exit(rc);
+        }
+        uint8_t *p = &mygid;
+        printf("Local GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
+#endif
         if (NULL != IBDEV) {
             /* Found it */
             break;

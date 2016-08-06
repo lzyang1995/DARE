@@ -18,7 +18,7 @@
 #include <unistd.h>
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
-#include<arpa/inet.h>
+#include <arpa/inet.h>
 
 #include <dare_ibv_ud.h>
 #include <dare_ibv_rc.h>
