@@ -1628,6 +1628,9 @@ handle_rc_syn(struct ibv_wc *wc, rc_syn_t *msg)
     reply->mtu           = IBDEV->mtu;
     reply->idx           = SRV_DATA->config.idx;
     reply->size          = 1;
+#ifdef lzyang
+    reply->mygid         = IBDEV->mygid;
+#endif
     qpns[0] = ep->rc_ep.rc_qp[LOG_QP].qp->qp_num;
     qpns[1] = ep->rc_ep.rc_qp[CTRL_QP].qp->qp_num;
     len += 2*sizeof(uint32_t);
@@ -1660,6 +1663,9 @@ handle_rc_synack(struct ibv_wc *wc, rc_syn_t *msg)
     ep = (dare_ib_ep_t*)SRV_DATA->config.servers[msg->idx].ep;
     if (0 == ep->rc_connected) {
         /* Create UD endpoint from WC */
+#ifdef lzyang
+        (ep->ud_ep).mygid = msg->mygid;
+#endif
         wc_to_ud_ep(&ep->ud_ep, wc);
         debug(log_fp, "NEW SYNACK msg from server %"PRIu8" with lid=%"PRIu16"\n", 
                 msg->idx, ep->ud_ep.lid);
