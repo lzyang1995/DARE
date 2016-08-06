@@ -14,6 +14,7 @@
 
 #include <infiniband/verbs.h> /* OFED stuff */
 #include <dare_ibv.h>
+#include <dare_ibv_ud.h>
 
 #define SIGNALED    1
 #define NOTSIGNALED 0
@@ -76,7 +77,7 @@ int rc_get_remote_apply_offsets();
 
 /* QP interface */
 int rc_disconnect_server( uint8_t idx );
-int rc_connect_server( uint8_t idx, int qp_id );
+int rc_connect_server( rc_syn_t *msg, int qp_id );
 int rc_revoke_log_access();
 int rc_restore_log_access();
 

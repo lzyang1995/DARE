@@ -2309,7 +2309,6 @@ rc_qp_init_to_rtr( dare_ib_ep_t *ep, int qp_id )
 #ifdef lzyang
     attr.ah_attr.grh.dgid = ep->ud_ep.mygid;
     attr.ah_attr.grh.hop_limit = 1;
-    attr.ah_attr.grh.sgid_index = IBDEV->mygid;
 #endif
 
     rc = ibv_modify_qp(ep->rc_ep.rc_qp[qp_id].qp, &attr, 
