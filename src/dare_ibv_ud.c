@@ -825,7 +825,7 @@ get_message:
         /* For UD: the number of bytes transferred is the 
            payload of the message plus the 40 bytes reserved 
            for the GRH */
-        
+
         ud_hdr = (ud_hdr_t*)(IBDEV->ud_recv_bufs[wc->wr_id] + 40);
         //debug(log_fp, "byte_len = %"PRIu32"\n", wc->byte_len);
         //debug(log_fp, "type = %"PRIu8"\n", ud_hdr->type);
@@ -1560,7 +1560,7 @@ handle_rc_syn(struct ibv_wc *wc, rc_syn_t *msg)
 #ifdef lzyang
         uint8_t *p = (uint8_t *)&(msg->mygid);
         printf("Remote GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
-        ep->ud_ep->mygid = msg->mygid;
+        (ep->ud_ep).mygid = msg->mygid;
 #endif
         /* Create UD endpoint from WC */
         wc_to_ud_ep(&ep->ud_ep, wc);
