@@ -77,7 +77,7 @@ int dare_init_ib_device( uint32_t receive_count )
         IBDEV = init_one_device(ib_devs[i]);
 #ifdef lzyang
         union ibv_gid mygid;
-        int rc = ibv_query_gid(IBDEV->ib_dev_context, 0, 0, &mygid);
+        int rc = ibv_query_gid(IBDEV->ib_dev_context, IBDEV->port_num, 0, &mygid);
         if(rc)
         {
             fprintf(stderr, "could not get gid for port 0, index 0\n");
