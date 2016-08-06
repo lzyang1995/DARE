@@ -88,6 +88,7 @@ typedef struct dare_ib_ep_t dare_ib_ep_t;
 
 struct dare_ib_device_t {
     /* General fields */
+    union ibv_gid mygid;
     struct ibv_device *ib_dev;
     struct ibv_context *ib_dev_context;
     struct ibv_device_attr ib_dev_attr;

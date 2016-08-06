@@ -67,6 +67,7 @@ struct rc_syn_t {
     uint8_t idx;
     uint8_t size;
     uint8_t data[0];    // log & ctrl QPNs
+    union ibv_gid mygid;
 };
 typedef struct rc_syn_t rc_syn_t;
 

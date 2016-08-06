@@ -11,6 +11,7 @@
  *            Nakul Vyas <mailnakul@gmail.com>
  * 
  */
+#define lzyang
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -169,7 +170,7 @@ struct ibv_ah* ud_ah_create( uint16_t dlid )
      
     memset(&ah_attr, 0, sizeof(ah_attr));
      
-    ah_attr.is_global     = 0;
+    ah_attr.is_global     = 1;
     ah_attr.dlid          = dlid;
     ah_attr.sl            = 0;
     ah_attr.src_path_bits = 0;
@@ -1482,6 +1483,7 @@ int ud_exchange_rc_info()
     request->ctrl_rm.rkey  = IBDEV->lcl_mr[CTRL_QP]->rkey;
     request->mtu           = IBDEV->mtu;
     request->idx           = SRV_DATA->config.idx;
+    request->mygid         = IBDEV->gid;
 
 //info(log_fp, "RC SYN: LOG MR=[%"PRIu64"; %"PRIu32"]; LOG MR=[%"PRIu64"; %"PRIu32"]\n",
 //     request->log_rm.raddr, request->log_rm.rkey, request->ctrl_rm.raddr, request->ctrl_rm.rkey);
@@ -1545,6 +1547,10 @@ handle_rc_syn(struct ibv_wc *wc, rc_syn_t *msg)
     /* Verify if RC already established */
     ep = (dare_ib_ep_t*)SRV_DATA->config.servers[msg->idx].ep;
     if (0 == ep->rc_connected) {
+#ifdef lzyang
+        uint8_t *p = &(msg->mygid);
+        printf("Remote GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
+#endif
         /* Create UD endpoint from WC */
         wc_to_ud_ep(&ep->ud_ep, wc);
         text(log_fp, "New SYN msg from server %"PRIu8" with lid=%"PRIu16"\n", 
