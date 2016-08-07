@@ -2149,6 +2149,9 @@ int ud_send_clt_reply( uint16_t lid, uint64_t req_id, uint8_t type )
             csm_reply->hdr.id = req_id;
             csm_reply->hdr.type = CSM_REPLY;
             csm_reply->data.len = 0;
+#ifdef lzyang
+            csm_reply->data.mygid = IBDEV->mygid;
+#endif
             len = sizeof(client_rep_t);
 #ifdef WRITE_BENCH            
             //HRT_GET_TIMESTAMP(SRV_DATA->t2);

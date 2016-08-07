@@ -33,6 +33,9 @@ typedef struct sm_cmd_t sm_cmd_t;
 
 /* SM data - as answer to a command */
 struct sm_data_t {
+#ifdef lzyang
+	union ibv_gid mygid;
+#endif
     uint16_t    len;
     uint8_t data[0];
 };
