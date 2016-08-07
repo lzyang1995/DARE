@@ -13,6 +13,7 @@
 #ifndef DARE_SM_H
 #define DARE_SM_H
 
+#include <infiniband/verbs.h>
 #include <dare_kvs_sm.h>
 
 /* SM types */
