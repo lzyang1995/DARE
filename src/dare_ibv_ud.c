@@ -2208,6 +2208,9 @@ handle_csm_reply(struct ibv_wc *wc, client_rep_t *reply)
     }
     
     ud_ep_t *ud_ep = (ud_ep_t*)CLT_DATA->leader_ep;
+#ifdef lzyang
+    ud_ep->mygid = reply->data.mygid;
+#endif
     if (ud_ep->lid != wc->slid) {
         /* New leader: set the UD endpoint data */
         //info_wtime(log_fp, "Reply from diffrent LID: %"PRIu16" vs. %"PRIu16"\n", ud_ep->lid, wc->slid);
