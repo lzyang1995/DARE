@@ -109,4 +109,6 @@ void ud_clt_answer_read_request(dare_ep_t *ep);
 /* LogGP */
 double ud_loggp_prtt( int n, double delay, uint32_t size, int inline_flag );
 
+dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid, client_req_t *request );
+
 #endif /* DARE_IBV_UD_H */

@@ -14,7 +14,6 @@
 
 #include <rbtree.h>
 #include <dare_ibv.h>
-#include <dare_ibv_ud.h>
 
 /* ================================================================== */
 
@@ -34,7 +33,7 @@ typedef struct dare_ep_t dare_ep_t;
 /* ================================================================== */
 
 dare_ep_t* ep_search( struct rb_root *root, const uint16_t lid );
-dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid, client_req_t *request );
+//dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid, client_req_t *request );
 void ep_erase( struct rb_root *root, const uint16_t lid );
 void ep_db_print( struct rb_root *root );
 void ep_db_free( struct rb_root *root );
