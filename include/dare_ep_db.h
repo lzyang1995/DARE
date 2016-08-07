@@ -14,6 +14,7 @@
 
 #include <rbtree.h>
 #include <dare_ibv.h>
+#include <dare_ibv_ud.h>
 
 /* ================================================================== */
 
