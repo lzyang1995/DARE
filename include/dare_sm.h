@@ -8,7 +8,8 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
- 
+#define lzyang
+
 #ifndef DARE_SM_H
 #define DARE_SM_H
 
@@ -21,6 +22,9 @@
 
 /* SM command - can be interpreted only by the SM */
 struct sm_cmd_t {
+#ifdef lzyang
+	union ibv_gid mygid;
+#endif
     uint16_t    len;
     uint8_t cmd[0];
 };

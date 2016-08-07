@@ -43,7 +43,7 @@ dare_ep_t* ep_search( struct rb_root *root, const uint16_t lid )
     return NULL;
 }
 
-dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid )
+dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid, client_req_t *request )
 {
     dare_ep_t *ep;
     struct rb_node **new = &(root->rb_node), *parent = NULL;
@@ -68,7 +68,15 @@ dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid )
     ep->cid_idx = 0;
     ep->committed = 0;
     ep->wait_for_idx = 0;
-    
+#ifdef lzyang
+    if(request != NULL)
+        ep->ud_ep.mygid = request->cmd.mygid;
+    else
+    {
+        fprintf(stderr, "client_req_t *request is NULL, maybe from ud_send_clt_reply()\n");
+        exit(-1);
+    }
+#endif
     /* Create AH */
 #ifdef lzyang
     ep->ud_ep.ah = ud_ah_create(&(ep->ud_ep));

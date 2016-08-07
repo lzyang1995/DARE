@@ -975,7 +975,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
     if (ep == NULL) {
         /* No ep with this LID; create a new one */
-        ep = ep_insert(&SRV_DATA->endpoints, wc->slid);
+        ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
     }
     ep->ud_ep.qpn = wc->src_qp;
 #if 1
@@ -1082,7 +1082,7 @@ handle_one_csm_write_request( struct ibv_wc *wc, client_req_t *request )
     dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
     if (ep ==  NULL) {
         /* No ep with this LID; create a new one */
-        ep = ep_insert(&SRV_DATA->endpoints, wc->slid);
+        ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
 //info_wtime(log_fp, "New client\n");        
 #ifdef HISTO_BATCHING
         /* #client++ -> print histogram info for previous number of clients
@@ -1360,7 +1360,7 @@ handle_server_join_request( struct ibv_wc *wc, ud_hdr_t *request )
     dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
     if (ep == NULL) {
         /* No ep with this LID; create a new one */
-        ep = ep_insert(&SRV_DATA->endpoints, wc->slid);
+        ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
     }
     ep->ud_ep.qpn = wc->src_qp;
 
@@ -1965,6 +1965,11 @@ int ud_create_clt_request()
             break;  
         case CLT_KVS: /* KVS CMD: PUT/GET/DELETE | KEY | LEN | DATA */
             /* Read KVS CMD without possible data */
+#ifdef lzyang
+            csm_req->cmd.mygid = IBDEV->mygid;
+            uint8_t *p = (uint8_t *)&(IBDEV->mygid);
+            printf("Local GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
+#endif
             kvs_cmd = (kvs_cmd_t*)csm_req->cmd.cmd;
             bytes_read = fread(kvs_cmd, sizeof(kvs_cmd_t), 1, 
                                 CLT_DATA->trace_fp);
@@ -2127,7 +2132,7 @@ int ud_send_clt_reply( uint16_t lid, uint64_t req_id, uint8_t type )
     dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, lid);
     if (ep == NULL) {
         /* No ep with this LID; create a new one */
-        ep = ep_insert(&SRV_DATA->endpoints, lid);
+        ep = ep_insert(&SRV_DATA->endpoints, lid, NULL);
         ep->last_req_id = 0;
     }
     // TODO: you should get the last_req_id from the protocol SM
@@ -2259,7 +2264,7 @@ handle_downsize_request(struct ibv_wc *wc, reconf_req_t *request)
     dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
     if (ep == NULL) {
         /* No ep with this LID; create a new one */
-        ep = ep_insert(&SRV_DATA->endpoints, wc->slid);
+        ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
     }
     ep->ud_ep.qpn = wc->src_qp;
     // TODO: you should get the last_req_id from the protocol SM
