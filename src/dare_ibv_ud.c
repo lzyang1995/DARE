@@ -1000,6 +1000,9 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     memset(reply, 0, sizeof(client_rep_t));
     reply->hdr.id = request->hdr.id;
     reply->hdr.type = CSM_REPLY;
+#ifdef lzyang
+    reply->data.mygid = IBDEV->mygid;
+#endif
     
     /* Get data from SM */
     rc = SRV_DATA->sm->apply_cmd(SRV_DATA->sm, &request->cmd, &reply->data);
