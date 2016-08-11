@@ -12,6 +12,7 @@
  * 
  */
 #define lzyang
+#define RDTSC
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,6 +30,11 @@
 #include <dare_client.h>
 #include <dare_kvs_sm.h>
 #include <timer.h>
+
+#ifndef RDTSC
+#include <time.h>
+#endif
+
 extern FILE *log_fp;
 
 /* InfiniBand device */
@@ -2023,7 +2029,11 @@ int ud_create_clt_request()
 send_request:
     /* Send request */
     if (CLT_TYPE_RTRACE == CLT_DATA->input->clt_type) {
+#ifdef RDTSC
         HRT_GET_TIMESTAMP(CLT_DATA->t1);
+#else
+        clock_gettime(CLOCK_MONOTONIC, &(CLT_DATA->t1));
+#endif
     }
     return send_clt_request(len);
 }

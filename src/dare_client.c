@@ -8,7 +8,9 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
- 
+
+#define RDTSC
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -22,6 +24,10 @@
 #include <dare_ibv.h>
 #include <dare_client.h>
 #include <dare_kvs_sm.h>
+
+#ifndef RDTSC
+#include <time.h>
+#endif
 
 #define MEASURE_COUNT 1000
 //#define MEASURE_COUNT 3
@@ -448,7 +454,10 @@ repeat_trace:
         /* First print the latency of this command */
         qsort(ticks, MEASURE_COUNT, sizeof(uint64_t), cmpfunc_uint64);
         for (i = 0; i < MEASURE_COUNT; i++) {
+#ifdef RDTSC
             fprintf(data.output_fp, "%9.3lf ", HRT_GET_USEC(ticks[i]));
+#else
+            fprintf(data.output_fp, "%"PRIu64" ", ticks[i]);
         }
         fprintf(data.output_fp, "\n");
         /* How to get the median */
@@ -556,8 +565,13 @@ poll_ud()
                 break;
             }
             if (CLT_TYPE_RTRACE == data.input->clt_type) {
+#ifdef RDTSC
                 HRT_GET_TIMESTAMP(data.t2);
                 HRT_GET_ELAPSED_TICKS(data.t1, data.t2, &(ticks[measure_count]));
+#else
+                clock_gettime(CLOCK_MONOTONIC, &(data.t2));
+                ticks[measure_count] = (data.t2.tv_sec - data.t1.tv_sec) * 1e9 + (data.t2.tv_nsec - data.t1.tv_nsec);
+#endif
                 measure_count++;
                 repeat_last_cmd = 0;
                 /* Reschedule timer event to read next command */

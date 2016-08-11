@@ -12,12 +12,18 @@
 #ifndef DARE_CLIENT_H
 #define DARE_CLIENT_H 
 
+#define RDTSC
+
 #include <stdio.h>
 #include <ev.h>
 #include <rbtree.h>
 #include <dare.h>
 #include <dare_sm.h>
 #include <timer.h>
+
+#ifndef RDTSC
+#include <time.h>
+#endif
 
 /* Retransmission period in ms */ 
 #ifdef DEBUG
@@ -54,7 +60,11 @@ struct dare_client_data_t {
     FILE                *trace_fp;
     FILE                *output_fp;
     dare_sm_t           *sm;        // local state machine
+#ifdef RDTSC
     HRT_TIMESTAMP_T     t1, t2;
+#else
+    struct timespec t1, t2;
+#endif
 };
 typedef struct dare_client_data_t dare_client_data_t;
 
