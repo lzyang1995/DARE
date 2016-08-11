@@ -10,6 +10,7 @@
  */
 
 #define RDTSC
+#define lzyang
 
 #include <stdlib.h>
 #include <string.h>
