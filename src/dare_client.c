@@ -458,6 +458,7 @@ repeat_trace:
             fprintf(data.output_fp, "%9.3lf ", HRT_GET_USEC(ticks[i]));
 #else
             fprintf(data.output_fp, "%"PRIu64" ", ticks[i]);
+#endif
         }
         fprintf(data.output_fp, "\n");
         /* How to get the median */
