@@ -8,7 +8,8 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
- 
+#define lzyang
+
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -84,6 +85,9 @@ unsigned long long g_timerfreq;
 uint64_t dare_state;
 
 FILE *log_fp;
+#ifdef lzyang
+FILE *lzyang_fp_ack;
+#endif
 
 /* server data */
 dare_server_data_t data;
@@ -201,7 +205,9 @@ int dare_server_init( dare_server_input_t *input )
     
     /* Set log file handler */
     log_fp = input->log;
-    
+#ifdef lzyang
+    lzyang_fp_ack = fopen("./ackinfo", "w");
+#endif    
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
     

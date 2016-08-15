@@ -10,6 +10,12 @@
  */
 #define lzyang
 
+#ifdef lzyang
+#include <time.h>
+struct timespec lzyang_start, lzyang_now;
+int lzyang_flag = 0;
+#endif
+
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -36,6 +42,10 @@
 
 extern FILE *log_fp;
 extern int terminate; 
+
+#ifdef lzyang
+extern FILE *lzyang_fp_ack;
+#endif
 
 /* InfiniBand device */
 extern dare_ib_device_t *dare_ib_device;
@@ -3097,6 +3107,32 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                         server->next_lr_step = LR_UPDATE_END;
 //TIMER_INFO(log_fp, "[p%"PRIu8"->log(:%"PRIu64")]\n", idx, server->cached_end_offset);
                         server->send_flag = 1;
+#ifdef lzyang
+                        if(!lzyang_flag)
+                        {
+                            lzyang_flag = 1;
+                            if(clock_gettime(CLOCK_MONOTONIC, &lzyang_start) != 0)
+                            {
+                                fprintf(lzyang_fp_ack, "Fail to get the first timestamp for p%"PRIu8" LR_UPDATE_LOG %"PRIu64"\n", idx, server->cached_end_offset);
+                            }
+                            else
+                            {
+                                fprintf(lzyang_fp_ack, "0\t\tp%"PRIu8"\t\tLR_UPDATE_LOG\t\t%"PRIu64"\n", idx, server->cached_end_offset);
+                            }
+                        }
+                        else
+                        {
+                            if(clock_gettime(CLOCK_MONOTONIC, &lzyang_now) != 0)
+                            {
+                                fprintf(lzyang_fp_ack, "Fail to get timestamp for p%"PRIu8" LR_UPDATE_LOG %"PRIu64"\n", idx, server->cached_end_offset);
+                            }
+                            else
+                            {
+                                uint64_t lzyang_interval = 1e9 * (lzyang_now.tv_sec - lzyang_start.tv_sec) + (lzyang_now.tv_nsec - lzyang_start.tv_nsec);
+                                fprintf(lzyang_fp_ack, "%"PRIu64"\t\tp%"PRIu8"\t\tLR_UPDATE_LOG\t\t%"PRIu64"\n", lzyang_interval, idx, server->cached_end_offset);
+                            }
+                        }
+#endif
                         break;
                     case 2:
                         /* First part of the send */
@@ -3115,6 +3151,33 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                 server->next_lr_step = LR_UPDATE_LOG;
 //TIMER_INFO(log_fp, "[p%"PRIu8"->e=%"PRIu64"]\n", idx, SRV_DATA->ctrl_data->log_offsets[idx].end);
                 server->send_flag = 1;
+
+#ifdef lzyang
+                if(!lzyang_flag)
+                {
+                    lzyang_flag = 1;
+                    if(clock_gettime(CLOCK_MONOTONIC, &lzyang_start) != 0)
+                    {
+                        fprintf(lzyang_fp_ack, "Fail to get the first timestamp for p%"PRIu8" LR_UPDATE_END %"PRIu64"\n", idx, server->cached_end_offset);
+                    }
+                    else
+                    {
+                        fprintf(lzyang_fp_ack, "0\t\tp%"PRIu8"\t\tLR_UPDATE_END\t\t%"PRIu64"\n", idx, server->cached_end_offset);
+                    }
+                }
+                else
+                {
+                    if(clock_gettime(CLOCK_MONOTONIC, &lzyang_now) != 0)
+                    {
+                        fprintf(lzyang_fp_ack, "Fail to get timestamp for p%"PRIu8" LR_UPDATE_END %"PRIu64"\n", idx, server->cached_end_offset);
+                    }
+                    else
+                    {
+                        uint64_t lzyang_interval = 1e9 * (lzyang_now.tv_sec - lzyang_start.tv_sec) + (lzyang_now.tv_nsec - lzyang_start.tv_nsec);
+                        fprintf(lzyang_fp_ack, "%"PRIu64"\t\tp%"PRIu8"\t\tLR_UPDATE_END\t\t%"PRIu64"\n", lzyang_interval, idx, server->cached_end_offset);
+                    }
+                }   
+#endif
             }
         }
         else {
