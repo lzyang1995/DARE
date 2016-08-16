@@ -8,7 +8,7 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
-//#define lzyang
+#define lzyang
 
 #include <stdlib.h>
 #include <string.h>
