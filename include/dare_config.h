@@ -13,6 +13,7 @@
 #define DARE_CONFIG_H 
 
 #include <dare.h>
+#include <define.h>
 
 /* Stable configuration: only one size specified */
 #define CID_STABLE  0

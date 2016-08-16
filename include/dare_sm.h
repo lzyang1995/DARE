@@ -15,6 +15,7 @@
 
 #include <infiniband/verbs.h>
 #include <dare_kvs_sm.h>
+#include <define.h>
 
 /* SM types */
 #define SM_NULL 1

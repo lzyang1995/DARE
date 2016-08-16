@@ -25,6 +25,7 @@
 #include <dare_ibv.h>
 #include <dare_client.h>
 #include <dare_kvs_sm.h>
+#include <define.h>
 
 #ifndef RDTSC
 #include <time.h>

@@ -18,6 +18,7 @@
 #include <dare_sm.h>
 #include <dare.h>
 #include <dare_config.h>
+#include <define.h>
 
 #define NOOP    0
 #define CSM     1

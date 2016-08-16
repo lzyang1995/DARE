@@ -28,6 +28,7 @@
 #include <dare_ibv_rc.h>
 #include <dare_server.h>
 #include <dare_client.h>
+#include <define.h>
 
 extern FILE *log_fp;
 

@@ -21,6 +21,7 @@
 #include <dare_ibv.h>
 #include <dare_config.h>
 #include <dare_ep_db.h>
+#include <define.h>
 
 #define REQ_MAJORITY 13
 

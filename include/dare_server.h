@@ -19,6 +19,7 @@
 #include <dare_log.h>
 #include <dare.h>
 #include <timer.h>
+#include <define.h>
 
 /* Server types */
 #define SRV_TYPE_START  1

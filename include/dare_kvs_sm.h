@@ -16,6 +16,7 @@
 #include <inttypes.h>
 
 #include <dare_sm.h>
+#include <define.h>
 
 #define DEFAULT_KVS_SIZE 1024
 #define KEY_SIZE 64

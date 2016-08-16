@@ -30,6 +30,7 @@
 #include <dare_client.h>
 #include <dare_kvs_sm.h>
 #include <timer.h>
+#include <define.h>
 
 #ifndef RDTSC
 #include <time.h>

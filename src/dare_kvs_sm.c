@@ -15,6 +15,7 @@
 #include <dare.h>
 #include <dare_sm.h>
 #include <dare_kvs_sm.h>
+#include <define.h>
 
 uint32_t kvs_size; // kvs size in bytes
 

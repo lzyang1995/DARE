@@ -17,6 +17,7 @@
 #include <dare_ibv_rc.h>
 
 #include <dare_ep_db.h>
+#include <define.h>
 
 /* ================================================================== */
 

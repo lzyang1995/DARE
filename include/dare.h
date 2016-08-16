@@ -8,8 +8,9 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
- 
+
 #include <debug.h>
+#include <define.h>
 
 #ifndef DARE_H_
 #define DARE_H_

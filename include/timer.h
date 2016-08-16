@@ -16,6 +16,7 @@
 #define TIMER_H_
 
 #include <debug.h>
+#include <define.h>
 
 #define UINT32_T uint32_t
 #define UINT64_T uint64_t

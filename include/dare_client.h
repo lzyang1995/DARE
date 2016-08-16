@@ -20,6 +20,7 @@
 #include <dare.h>
 #include <dare_sm.h>
 #include <timer.h>
+#include <define.h>
 
 #ifndef RDTSC
 #include <time.h>

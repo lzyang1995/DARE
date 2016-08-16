@@ -8,7 +8,7 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
-#define lzyang
+//#define lzyang
 
 #include <stdlib.h>
 #include <string.h>
@@ -26,6 +26,7 @@
 #include <dare_ep_db.h>
 
 #include <timer.h>
+#include <define.h>
 
 /* 
  * HB period (seconds)

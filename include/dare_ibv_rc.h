@@ -15,6 +15,7 @@
 #include <infiniband/verbs.h> /* OFED stuff */
 #include <dare_ibv.h>
 #include <dare_ibv_ud.h>
+#include <define.h>
 
 #define SIGNALED    1
 #define NOTSIGNALED 0

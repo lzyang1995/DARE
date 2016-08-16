@@ -8,7 +8,8 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
-#define lzyang
+//#define lzyang
+#define lzyang_p
 
 #ifdef lzyang
 #include <time.h>
@@ -28,6 +29,7 @@ int lzyang_flag = 0;
 #include <dare_server.h>
 #include <timer.h>
 #include <math.h>
+#include <define.h>
 
 /* Return code for RC operations */
 #define RC_ERROR      1
@@ -2306,7 +2308,7 @@ rc_qp_init_to_rtr( dare_ib_ep_t *ep, int qp_id )
     attr.rq_psn             = (LOG_QP == qp_id) ? LOG_PSN : CTRL_PSN;
 #endif    
     /* Note: this needs to modified for the lock; see rc_log_qp_lock */
-#ifdef lzyang
+#ifdef lzyang_p
     attr.ah_attr.is_global     = 1;
 #else
     attr.ah_attr.is_global     = 0;
@@ -2316,7 +2318,7 @@ rc_qp_init_to_rtr( dare_ib_ep_t *ep, int qp_id )
     attr.ah_attr.sl            = 0;
     attr.ah_attr.src_path_bits = 0;
 
-#ifdef lzyang
+#ifdef lzyang_p
     attr.ah_attr.grh.dgid = ep->ud_ep.mygid;
     attr.ah_attr.grh.hop_limit = 1;
 #endif

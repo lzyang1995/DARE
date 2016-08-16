@@ -17,6 +17,7 @@
 #define __STDC_FORMAT_MACROS
 #include <inttypes.h>
 #include <sys/time.h>
+#include <define.h>
 
 //extern struct timeval prev_tv;
 //extern uint64_t jump_cnt;

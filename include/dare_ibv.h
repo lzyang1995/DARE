@@ -12,6 +12,7 @@
 
 #include <infiniband/verbs.h> /* OFED IB verbs */
 #include <dare.h>
+#include <define.h>
  
 #ifndef DARE_IBV_H
 #define DARE_IBV_H
