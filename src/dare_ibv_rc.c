@@ -11,11 +11,11 @@
 //#define lzyang
 #define lzyang_p
 
-#ifdef lzyang
+//#ifdef lzyang
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;
 int lzyang_flag = 0;
-#endif
+//#endif
 
 #include <stdlib.h>
 #include <sys/types.h>
