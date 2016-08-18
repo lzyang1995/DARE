@@ -1787,15 +1787,19 @@ static void
 commit_new_entries()
 {
     int rc;
-
-#ifdef TEST_CONSENSUS_LATENCY
-    clock_gettime(CLOCK_MONOTONIC, &con_start);
-#endif
  
     if (log_offset_end_distance(data.log, data.log->commit)) {
         //info_wtime(log_fp, "TRY TO COMMIT NEW ENTRY\n");
         //INFO_PRINT_LOG(log_fp, data.log);
+#ifdef TEST_CONSENSUS_LATENCY
+        clock_gettime(CLOCK_MONOTONIC, &con_start);
+#endif
         rc = dare_ib_write_remote_logs(1);
+#ifdef TEST_CONSENSUS_LATENCY
+        clock_gettime(CLOCK_MONOTONIC, &con_end);
+        uint64_t inter = 1e9 * (con_end.tv_sec - con_start.tv_sec) + (con_end.tv_nsec - con_start.tv_nsec);
+        fprintf(fp_consensus_latency, "%"PRIu64"\n", inter);
+#endif
         if (0 != rc) {
             error(log_fp, "Cannot write remote logs\n");
         }
@@ -1826,12 +1830,6 @@ commit_new_entries()
             }
         }
     }
-
-#ifdef TEST_CONSENSUS_LATENCY
-    clock_gettime(CLOCK_MONOTONIC, &con_end);
-    uint64_t inter = 1e9 * (con_end.tv_sec - con_start.tv_sec) + (con_end.tv_nsec - con_start.tv_nsec);
-    fprintf(fp_consensus_latency, "%"PRIu64"\n", inter);
-#endif
 }
 
 /**
