@@ -8,7 +8,8 @@
  * Author(s): Marius Poke <marius.poke@inf.ethz.ch>
  * 
  */
-#define lzyang
+//#define lzyang
+#define TEST_CONSENSUS_LATENCY
 
 #include <stdlib.h>
 #include <string.h>
@@ -27,6 +28,7 @@
 
 #include <timer.h>
 #include <define.h>
+#include <time.h>
 
 /* 
  * HB period (seconds)
@@ -88,6 +90,12 @@ uint64_t dare_state;
 FILE *log_fp;
 #ifdef lzyang
 FILE *lzyang_fp_ack;
+
+#endif
+
+#ifdef TEST_CONSENSUS_LATENCY
+FILE *fp_consensus_latency;
+struct timespec con_start, con_end;
 #endif
 
 /* server data */
@@ -209,6 +217,9 @@ int dare_server_init( dare_server_input_t *input )
 #ifdef lzyang
     lzyang_fp_ack = fopen("./ackinfo", "w");
 #endif    
+#ifdef TEST_CONSENSUS_LATENCY
+    fp_consensus_latency = fopen("./consensus_latency", "w");
+#endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
     
@@ -1776,6 +1787,10 @@ static void
 commit_new_entries()
 {
     int rc;
+
+#ifdef TEST_CONSENSUS_LATENCY
+    clock_gettime(CLOCK_MONOTONIC, &con_start);
+#endif
  
     if (log_offset_end_distance(data.log, data.log->commit)) {
         //info_wtime(log_fp, "TRY TO COMMIT NEW ENTRY\n");
@@ -1811,6 +1826,12 @@ commit_new_entries()
             }
         }
     }
+
+#ifdef TEST_CONSENSUS_LATENCY
+    clock_gettime(CLOCK_MONOTONIC, &con_end);
+    uint64_t inter = 1e9 * (con_end.tv_sec - con_start.tv_sec) + (con_end.tv_nsec - con_start.tv_nsec);
+    fprintf(fp_consensus_latency, "%"PRIu64"\n", inter);
+#endif
 }
 
 /**
