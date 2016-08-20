@@ -48,6 +48,11 @@ extern int terminate;
 #ifdef lzyang
 extern FILE *lzyang_fp_ack;
 #endif
+#ifdef TEST_POST_SEND_INTERVAL
+extern FILE * post_send_inter;
+struct timespec start, end;
+int lzyang_first = 0;
+#endif
 
 /* InfiniBand device */
 extern dare_ib_device_t *dare_ib_device;
@@ -1613,6 +1618,24 @@ if (server->next_lr_step == LR_UPDATE_END) {
 else {
     sprintf(posted_sends_str, "%s %d-log", posted_sends_str, i);
 }
+#endif
+
+#ifdef TEST_POST_SEND_INTERVAL
+        if(lzyang_first == 0)
+        {
+            lzyang_first = 1;
+            clock_gettime(CLOCK_MONOTONIC, &start);
+            uint64_t stamp = 1e9 * start.tv_sec + start.tv_nsec;
+            fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset);
+        }
+        else
+        {
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            uint64_t stamp = 1e9 * end.tv_sec + end.tv_nsec;
+            uint64_t wor = 1e9 * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
+            start = end;
+            fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset, wor);
+        }
 #endif
 #ifdef DEBUG
         rc = 

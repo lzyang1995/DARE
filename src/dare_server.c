@@ -9,7 +9,9 @@
  * 
  */
 //#define lzyang
+#define TEST_POST_SEND_INTERVAL
 #define TEST_CONSENSUS_LATENCY
+#undef TEST_CONSENSUS_LATENCY
 
 #include <stdlib.h>
 #include <string.h>
@@ -93,9 +95,12 @@ FILE *lzyang_fp_ack;
 
 #endif
 
+struct timespec con_start, con_end;
 #ifdef TEST_CONSENSUS_LATENCY
 FILE *fp_consensus_latency;
-struct timespec con_start, con_end;
+#endif
+#ifdef TEST_POST_SEND_INTERVAL
+FILE *post_send_inter;
 #endif
 
 /* server data */
@@ -219,6 +224,9 @@ int dare_server_init( dare_server_input_t *input )
 #endif    
 #ifdef TEST_CONSENSUS_LATENCY
     fp_consensus_latency = fopen("./consensus_latency", "w");
+#endif
+#ifdef TEST_POST_SEND_INTERVAL
+    post_send_inter = fopen("./opst_send_inter", "w");
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
