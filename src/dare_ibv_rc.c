@@ -52,7 +52,7 @@ extern FILE *lzyang_fp_ack;
 #ifdef TEST_POST_SEND_INTERVAL
 extern FILE * post_send_inter;
 struct timespec start, end;
-int lzyang_first = 0;
+extern int lzyang_first;
 #endif
 
 /* InfiniBand device */
@@ -1829,6 +1829,16 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
         post_send(i, LOG_QP, remote_commit, sizeof(uint64_t), 
                         IBDEV->lcl_mr[CTRL_QP], IBV_WR_RDMA_WRITE, 
                         NOTSIGNALED, rm, NULL); 
+#ifdef
+        if(lzyang_first != 0)
+        {
+            clock_gettime(CLOCK_MONOTONIC, &end);
+            uint64_t stamp = 1e9 * end.tv_sec + end.tv_nsec;
+            uint64_t wor = 1e9 * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
+            start = end;
+            fprintf(post_send_inter, "%"PRIu64"\tp%d\tUP COMMIT END\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->cached_end_offset, wor);
+        }
+#endif
 #ifdef DEBUG        
         if (0 != rc) {
             /* This should never happen */
@@ -3151,6 +3161,16 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                         server->next_lr_step = LR_UPDATE_END;
 //TIMER_INFO(log_fp, "[p%"PRIu8"->log(:%"PRIu64")]\n", idx, server->cached_end_offset);
                         server->send_flag = 1;
+#ifdef TEST_POST_SEND_INTERVAL
+                        if(lzyang_first != 0)
+                        {
+                            clock_gettime(CLOCK_MONOTONIC, &end);
+                            uint64_t stamp = 1e9 * end.tv_sec + end.tv_nsec;
+                            uint64_t wor = 1e9 * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
+                            start = end;
+                            fprintf(post_send_inter, "%"PRIu64"\tp%d\tACK OF C\t%"PRIu64"\t%"PRIu64"\n", stamp, idx, server->cached_end_offset, wor);
+                        }
+#endif
 #ifdef lzyang
                         if(lzyang_flag == 1)
                         {
@@ -3180,6 +3200,16 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                 server->next_lr_step = LR_UPDATE_LOG;
 //TIMER_INFO(log_fp, "[p%"PRIu8"->e=%"PRIu64"]\n", idx, SRV_DATA->ctrl_data->log_offsets[idx].end);
                 server->send_flag = 1;
+#ifdef TEST_POST_SEND_INTERVAL
+                if(lzyang_first != 0)
+                {
+                    clock_gettime(CLOCK_MONOTONIC, &end);
+                    uint64_t stamp = 1e9 * end.tv_sec + end.tv_nsec;
+                    uint64_t wor = 1e9 * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
+                    start = end;
+                    fprintf(post_send_inter, "%"PRIu64"\tp%d\tACK OF D\t%"PRIu64"\t%"PRIu64"\n", stamp, idx, server->cached_end_offset, wor);
+                }
+#endif
 
 #ifdef lzyang
                 if(lzyang_flag == 1)

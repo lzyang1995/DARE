@@ -100,6 +100,7 @@ struct timespec con_start, con_end;
 FILE *fp_consensus_latency;
 #endif
 #ifdef TEST_POST_SEND_INTERVAL
+int lzyang_first = 0;
 FILE *post_send_inter;
 #endif
 
@@ -1803,6 +1804,8 @@ commit_new_entries()
         clock_gettime(CLOCK_MONOTONIC, &con_start);
 #endif
         rc = dare_ib_write_remote_logs(1);
+        /* The function above is called only once for a request */
+        /* loop_for_commit used to avoid going back through libev before the commit is over */
 #ifdef TEST_CONSENSUS_LATENCY
         clock_gettime(CLOCK_MONOTONIC, &con_end);
         uint64_t inter = 1e9 * (con_end.tv_sec - con_start.tv_sec) + (con_end.tv_nsec - con_start.tv_nsec);
