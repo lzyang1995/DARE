@@ -1809,7 +1809,7 @@ commit_new_entries()
 #ifdef TEST_CONSENSUS_LATENCY
         clock_gettime(CLOCK_MONOTONIC, &con_end);
         uint64_t inter = 1e9 * (con_end.tv_sec - con_start.tv_sec) + (con_end.tv_nsec - con_start.tv_nsec);
-        fprintf(fp_consensus_latency, "%"PRIu64"\%"PRIu64"\n", inter, data.log->end);
+        fprintf(fp_consensus_latency, "%"PRIu64"\t%"PRIu64"\n", inter, data.log->end);
 #endif
         if (0 != rc) {
             error(log_fp, "Cannot write remote logs\n");
