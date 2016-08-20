@@ -1829,7 +1829,7 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
         post_send(i, LOG_QP, remote_commit, sizeof(uint64_t), 
                         IBDEV->lcl_mr[CTRL_QP], IBV_WR_RDMA_WRITE, 
                         NOTSIGNALED, rm, NULL); 
-#ifdef
+#ifdef TEST_POST_SEND_INTERVAL
         if(lzyang_first != 0)
         {
             clock_gettime(CLOCK_MONOTONIC, &end);
