@@ -1823,12 +1823,7 @@ info(log_fp, "%s\n", buf);
 #if 0        
 sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
 #endif
-#ifdef DEBUG 
-        rc = 
-#endif        
-        post_send(i, LOG_QP, remote_commit, sizeof(uint64_t), 
-                        IBDEV->lcl_mr[CTRL_QP], IBV_WR_RDMA_WRITE, 
-                        NOTSIGNALED, rm, NULL); 
+
 #ifdef TEST_POST_SEND_INTERVAL
         if(lzyang_first != 0)
         {
@@ -1839,6 +1834,14 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
             fprintf(post_send_inter, "%"PRIu64"\tp%d\tUP COMMIT END\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->cached_end_offset, wor);
         }
 #endif
+
+#ifdef DEBUG 
+        rc = 
+#endif        
+        post_send(i, LOG_QP, remote_commit, sizeof(uint64_t), 
+                        IBDEV->lcl_mr[CTRL_QP], IBV_WR_RDMA_WRITE, 
+                        NOTSIGNALED, rm, NULL); 
+
 #ifdef DEBUG        
         if (0 != rc) {
             /* This should never happen */
