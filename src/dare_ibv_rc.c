@@ -1627,7 +1627,7 @@ else {
             lzyang_first = 1;
             clock_gettime(CLOCK_MONOTONIC, &start);
             uint64_t stamp = 1e9 * start.tv_sec + start.tv_nsec;
-            fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset);
+            fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset);
         }
         else
         {
@@ -1635,7 +1635,7 @@ else {
             uint64_t stamp = 1e9 * end.tv_sec + end.tv_nsec;
             uint64_t wor = 1e9 * (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec);
             start = end;
-            fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset, wor);
+            fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset, wor);
         }
 #endif
 #ifdef DEBUG
