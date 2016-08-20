@@ -10,6 +10,7 @@
  */
 //#define lzyang
 #define lzyang_p
+#define TEST_POST_SEND_INTERVAL
 
 //#ifdef lzyang
 #include <time.h>
