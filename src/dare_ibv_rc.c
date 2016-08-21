@@ -62,8 +62,11 @@ extern int lzyang_first;
 
 #ifdef BREAKDOWN_600NS
 extern FILE *breakdown_600ns;
+extern FILE *ml_latency;
 struct timespec break_start, break_end;
 int in_loop = 0;
+//measurment latency
+struct timespec ml_start, ml_end;
 #endif
 
 /* InfiniBand device */
@@ -2628,6 +2631,7 @@ post_send( uint8_t server_id,
     wr.wr.rdma.remote_addr = rm.raddr;
     wr.wr.rdma.rkey        = rm.rkey;
 #ifdef BREAKDOWN_600NS
+    clock_gettime(CLOCK_MONOTONIC, &ml_start);
     if(in_loop == 1)
     {
         clock_gettime(CLOCK_MONOTONIC, &break_end);
@@ -2636,6 +2640,9 @@ post_send( uint8_t server_id,
         break_start = break_end;
         fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
     }
+    clock_gettime(CLOCK_MONOTONIC, &ml_end);
+    uint64_t ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
+    fprintf(ml_latency, "%"PRIu64"\n", ml_interval);
 #endif
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
 #ifdef BREAKDOWN_600NS

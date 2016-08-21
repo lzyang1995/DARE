@@ -113,6 +113,8 @@ FILE *post_send_inter;
 
 #ifdef BREAKDOWN_600NS
 FILE *breakdown_600ns;
+//measurment latency
+FILE *ml_latency;
 #endif
 
 /* server data */
@@ -243,6 +245,7 @@ int dare_server_init( dare_server_input_t *input )
 
 #ifdef BREAKDOWN_600NS
     breakdown_600ns = fopen("./breakdown_600ns", "w");
+    ml_latency = fopen("./ml_latency", "w");
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
