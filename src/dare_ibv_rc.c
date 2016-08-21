@@ -63,6 +63,7 @@ extern int lzyang_first;
 #ifdef BREAKDOWN_600NS
 extern FILE *breakdown_600ns;
 struct timespec break_start, break_end;
+int in_loop = 0;
 #endif
 
 /* InfiniBand device */
@@ -1519,6 +1520,9 @@ update_remote_logs()
     size = get_extended_group_size(SRV_DATA->config);
 //info(log_fp, "%s:%d size=%d\n", __func__, __LINE__, size);
 //HRT_GET_TIMESTAMP(SRV_DATA->t1);
+#ifdef BREAKDOWN_600NS
+    in_loop = 1;
+#endif
     for (i = 0, init = 0; i < size; i++) {
         if ( (i == SRV_DATA->config.idx) ||
             !CID_IS_SERVER_ON(SRV_DATA->config.cid, i) )
@@ -1717,6 +1721,9 @@ else {
         TIMER_STOP(log_fp);
     }
 //HRT_GET_TIMESTAMP(SRV_DATA->t2);
+#ifdef BREAKDOWN_600NS
+    in_loop = 0;
+#endif
 
 
     /* Find minimum offset that exists on a majority of servers 
@@ -2621,19 +2628,25 @@ post_send( uint8_t server_id,
     wr.wr.rdma.remote_addr = rm.raddr;
     wr.wr.rdma.rkey        = rm.rkey;
 #ifdef BREAKDOWN_600NS
-    clock_gettime(CLOCK_MONOTONIC, &break_end);
-    uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-    uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-    break_start = break_end;
-    fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
+    if(in_loop == 1)
+    {
+        clock_gettime(CLOCK_MONOTONIC, &break_end);
+        uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+        uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+        break_start = break_end;
+        fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
+    }
 #endif
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
 #ifdef BREAKDOWN_600NS
-    clock_gettime(CLOCK_MONOTONIC, &break_end);
-    break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-    break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-    break_start = break_end;
-    fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
+    if(in_loop == 1)
+    {
+        clock_gettime(CLOCK_MONOTONIC, &break_end);
+        break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+        break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+        break_start = break_end;
+        fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
+    }
 #endif
     if (0 != rc) {
         //info(log_fp, "POST ERROR: ssn=%"PRIu64":%"PRIu8"; next=%p; num_sge=%d, opcode=%s\n", 
@@ -2673,20 +2686,26 @@ empty_completion_queue( uint8_t server_id,
     while(1) {
         /* Read as many WCs as possible ... */
 #ifdef BREAKDOWN_600NS
-        clock_gettime(CLOCK_MONOTONIC, &break_end);
-        uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-        uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-        break_start = break_end;
-        fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_poll_cq\t%"PRIu64"\n", break_stamp, break_interval);
+        if(in_loop == 1)
+        {
+            clock_gettime(CLOCK_MONOTONIC, &break_end);
+            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+            break_start = break_end;
+            fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_poll_cq\t%"PRIu64"\n", break_stamp, break_interval);
+        }
 #endif
         ne = ibv_poll_cq(IBDEV->rc_cq[qp_id], IBDEV->rc_cqe, 
                         IBDEV->rc_wc_array);
 #ifdef BREAKDOWN_600NS
-        clock_gettime(CLOCK_MONOTONIC, &break_end);
-        break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-        break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-        break_start = break_end;
-        fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_poll_cq\t%"PRIu64"\n", break_stamp, break_interval);
+        if(in_loop == 1)
+        {
+            clock_gettime(CLOCK_MONOTONIC, &break_end);
+            break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+            break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+            break_start = break_end;
+            fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_poll_cq\t%"PRIu64"\n", break_stamp, break_interval);
+        }
 #endif
         if (0 == ne) {
             /* ... but do not wait for them... */
@@ -2721,11 +2740,14 @@ empty_completion_queue( uint8_t server_id,
 #endif 
 
 #ifdef BREAKDOWN_600NS
-        clock_gettime(CLOCK_MONOTONIC, &break_end);
-        break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-        break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-        break_start = break_end;
-        fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
+        if(in_loop == 1)
+        {
+            clock_gettime(CLOCK_MONOTONIC, &break_end);
+            break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+            break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+            break_start = break_end;
+            fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
+        }
 #endif
         //info_wtime(log_fp, "ne=%d\n", ne);
         for (i = 0; i < ne; i++) {
@@ -2856,11 +2878,14 @@ from the queues. */
             }
         }
 #ifdef BREAKDOWN_600NS
-        clock_gettime(CLOCK_MONOTONIC, &break_end);
-        break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-        break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-        break_start = break_end;
-        fprintf(breakdown_600ns, "%"PRIu64"\tAFTER PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
+        if(in_loop == 1)
+        {
+            clock_gettime(CLOCK_MONOTONIC, &break_end);
+            break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+            break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+            break_start = break_end;
+            fprintf(breakdown_600ns, "%"PRIu64"\tAFTER PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
+        }
 #endif
     }
     return 0;
