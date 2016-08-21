@@ -2654,7 +2654,7 @@ post_send( uint8_t server_id,
         //end
 
         clock_gettime(CLOCK_MONOTONIC, &ml_end);
-        uint64_t ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
+        ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
         fprintf(ml_latency, "%"PRIu64"\n", ml_interval);
     }
 #endif
