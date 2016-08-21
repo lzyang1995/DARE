@@ -2743,8 +2743,8 @@ empty_completion_queue( uint8_t server_id,
         if(in_loop == 1)
         {
             clock_gettime(CLOCK_MONOTONIC, &break_end);
-            break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-            break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
             break_start = break_end;
             fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
         }
@@ -2881,8 +2881,8 @@ from the queues. */
         if(in_loop == 1)
         {
             clock_gettime(CLOCK_MONOTONIC, &break_end);
-            break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-            break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
             break_start = break_end;
             fprintf(breakdown_600ns, "%"PRIu64"\tAFTER PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
         }
