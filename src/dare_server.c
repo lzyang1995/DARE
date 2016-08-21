@@ -242,7 +242,7 @@ int dare_server_init( dare_server_input_t *input )
 #endif
 
 #ifdef BREAKDOWN_600NS
-    FILE *breakdown_600ns = fopen("./breakdown_600ns", "w");
+    breakdown_600ns = fopen("./breakdown_600ns", "w");
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
