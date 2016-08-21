@@ -16,7 +16,6 @@
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
-#undef TEST_CONSENSUS_LATENCY
 //#undef TEST_CONSENSUS_LATENCY
 
 #include <stdlib.h>
