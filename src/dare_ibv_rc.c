@@ -12,7 +12,7 @@
 #define lzyang_p
 #define TEST_POST_SEND_INTERVAL
 #define RDTSC
-
+#undef RDTSC
 //#ifdef lzyang
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;

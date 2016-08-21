@@ -12,6 +12,7 @@
 #define TEST_POST_SEND_INTERVAL
 #define TEST_CONSENSUS_LATENCY
 #define RDTSC
+#undef RDTSC
 //#undef TEST_CONSENSUS_LATENCY
 
 #include <stdlib.h>
@@ -1820,7 +1821,7 @@ commit_new_entries()
         HRT_GET_TIMESTAMP(rdtsc_end);
         uint64_t rdtsc_interval;
         HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_interval);
-        fprintf(fp_consensus_latency, "%9.3lf\t%"PRIu64"\n", HRT_GET_USEC(rdtsc_interval), data.log->end);
+        fprintf(fp_consensus_latency, "%9.3lf\t%"PRIu64"\n", HRT_GET_NSEC(rdtsc_interval), data.log->end);
 #else
         clock_gettime(CLOCK_MONOTONIC, &con_end);
         uint64_t inter = 1e9 * (con_end.tv_sec - con_start.tv_sec) + (con_end.tv_nsec - con_start.tv_nsec);
