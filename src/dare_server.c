@@ -115,7 +115,7 @@ FILE *post_send_inter;
 FILE *breakdown_600ns;
 //measurment latency
 FILE *ml_latency;
-static timespec ml_start, ml_end;
+static struct timespec ml_start, ml_end;
 #endif
 
 /* server data */
