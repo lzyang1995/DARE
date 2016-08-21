@@ -11,8 +11,12 @@
 //#define lzyang
 #define TEST_POST_SEND_INTERVAL
 #define TEST_CONSENSUS_LATENCY
+#define BREAKDOWN_600NS
 #define RDTSC
+
 #undef RDTSC
+#undef TEST_POST_SEND_INTERVAL
+#undef TEST_CONSENSUS_LATENCY
 //#undef TEST_CONSENSUS_LATENCY
 
 #include <stdlib.h>
@@ -105,6 +109,10 @@ FILE *fp_consensus_latency;
 #ifdef TEST_POST_SEND_INTERVAL
 int lzyang_first = 0;
 FILE *post_send_inter;
+#endif
+
+#ifdef BREAKDOWN_600NS
+FILE *breakdown_600ns;
 #endif
 
 /* server data */
@@ -231,6 +239,10 @@ int dare_server_init( dare_server_input_t *input )
 #endif
 #ifdef TEST_POST_SEND_INTERVAL
     post_send_inter = fopen("./opst_send_inter", "w");
+#endif
+
+#ifdef BREAKDOWN_600NS
+    FILE *breakdown_600ns = fopen("./breakdown_600ns", "w");
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
