@@ -14,7 +14,7 @@
 #define BREAKDOWN_600NS
 #define RDTSC
 
-#undef RDTSC
+//#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
 #undef TEST_CONSENSUS_LATENCY
 //#undef TEST_CONSENSUS_LATENCY
@@ -102,7 +102,7 @@ FILE *lzyang_fp_ack;
 #endif
 
 struct timespec con_start, con_end;
-HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
+static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 #ifdef TEST_CONSENSUS_LATENCY
 FILE *fp_consensus_latency;
 #endif
@@ -115,6 +115,7 @@ FILE *post_send_inter;
 FILE *breakdown_600ns;
 //measurment latency
 FILE *ml_latency;
+static timespec ml_start, ml_end;
 #endif
 
 /* server data */
@@ -1833,9 +1834,17 @@ commit_new_entries()
         /* loop_for_commit used to avoid going back through libev before the commit is over */
 #ifdef TEST_CONSENSUS_LATENCY
 #ifdef RDTSC
+        clock_gettime(CLOCK_MONOTONIC, &ml_start);
+
         HRT_GET_TIMESTAMP(rdtsc_end);
         uint64_t rdtsc_interval;
         HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_interval);
+        HRT_GET_NSEC(rdtsc_interval);
+
+        clock_gettime(CLOCK_MONOTONIC, &ml_end);
+        uint64_t ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
+        fprintf(ml_latency, "%"PRIu64"\n", ml_interval);
+
         fprintf(fp_consensus_latency, "%9.3lf\t%"PRIu64"\n", HRT_GET_NSEC(rdtsc_interval), data.log->end);
 #else
         clock_gettime(CLOCK_MONOTONIC, &con_end);
