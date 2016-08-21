@@ -2636,11 +2636,22 @@ post_send( uint8_t server_id,
     {
         clock_gettime(CLOCK_MONOTONIC, &ml_start);
 
+        //start
         clock_gettime(CLOCK_MONOTONIC, &break_end);
         uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
         uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
         break_start = break_end;
+        //end
+
+        clock_gettime(CLOCK_MONOTONIC, &ml_end);
+        uint64_t ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
+        fprintf(ml_latency, "%"PRIu64"\t", ml_interval);
+
+        clock_gettime(CLOCK_MONOTONIC, &ml_start);
+
+        //start
         fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
+        //end
 
         clock_gettime(CLOCK_MONOTONIC, &ml_end);
         uint64_t ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
