@@ -20,7 +20,7 @@
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;
 int lzyang_flag = 0;
-static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
+
 //#endif
 
 #include <stdlib.h>
@@ -77,6 +77,7 @@ extern dare_ib_device_t *dare_ib_device;
 
 uint64_t ssn;   // Send Sequence Number
 int wa_flag;
+static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 
 /* ================================================================== */
 
