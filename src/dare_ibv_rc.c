@@ -1637,7 +1637,7 @@ else {
             uint64_t rdtsc_wor;
             HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
             rdtsc_start = rdtsc_end;
-            fprintf(post_send_inter, "p%d\t%d\t\t%"PRIu64"\t%9.3lf\n", i, server->next_lr_step, server->cached_end_offset, HRT_GET_USEC(rdtsc_wor));
+            fprintf(post_send_inter, "p%d\t%d\t\t%"PRIu64"\t%9.3lf\n", i, server->next_lr_step, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
         }
 #else
         if(lzyang_first == 0)
@@ -1851,7 +1851,7 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
             uint64_t rdtsc_wor;
             HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
             rdtsc_start = rdtsc_end;
-            fprintf(post_send_inter, "p%d\tUP COMMIT END\t%"PRIu64"\t%9.3lf\n", i, server->cached_end_offset, HRT_GET_USEC(rdtsc_wor));
+            fprintf(post_send_inter, "p%d\tUP COMMIT END\t%"PRIu64"\t%9.3lf\n", i, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
         }
 #else
         if(lzyang_first != 0)
@@ -3202,7 +3202,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                             uint64_t rdtsc_wor;
                             HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
                             rdtsc_start = rdtsc_end;
-                            fprintf(post_send_inter, "p%d\tACK OF C\t%"PRIu64"\t%9.3lf\n", idx, server->cached_end_offset, HRT_GET_USEC(rdtsc_wor));
+                            fprintf(post_send_inter, "p%d\tACK OF C\t%"PRIu64"\t%9.3lf\n", idx, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
                         }
 #else
                         if(lzyang_first != 0)
@@ -3252,7 +3252,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                     uint64_t rdtsc_wor;
                     HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
                     rdtsc_start = rdtsc_end;
-                    fprintf(post_send_inter, "p%d\tACK OF D\t%"PRIu64"\t%9.3lf\n", idx, server->cached_end_offset, HRT_GET_USEC(rdtsc_wor));
+                    fprintf(post_send_inter, "p%d\tACK OF D\t%"PRIu64"\t%9.3lf\n", idx, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
                 }
 #else
                 if(lzyang_first != 0)

@@ -244,6 +244,9 @@ int dare_server_init( dare_server_input_t *input )
     }
 #endif
     //HRT_INIT(g_timerfreq);
+#ifdef RDTSC
+    HRT_INIT(g_timerfreq);
+#endif 
 
     /* Init server data */    
     rc = init_server_data();
