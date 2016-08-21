@@ -2642,8 +2642,8 @@ post_send( uint8_t server_id,
     if(in_loop == 1)
     {
         clock_gettime(CLOCK_MONOTONIC, &break_end);
-        break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-        break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+        uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+        uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
         break_start = break_end;
         fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
     }
@@ -2701,8 +2701,8 @@ empty_completion_queue( uint8_t server_id,
         if(in_loop == 1)
         {
             clock_gettime(CLOCK_MONOTONIC, &break_end);
-            break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-            break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
+            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
+            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
             break_start = break_end;
             fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_poll_cq\t%"PRIu64"\n", break_stamp, break_interval);
         }
