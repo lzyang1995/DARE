@@ -12,7 +12,7 @@
 #define lzyang_p
 #define TEST_POST_SEND_INTERVAL
 #define BREAKDOWN_600NS
-#define RDTSC
+//#define RDTSC
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
