@@ -11,6 +11,7 @@
 //#define lzyang
 #define TEST_POST_SEND_INTERVAL
 #define TEST_CONSENSUS_LATENCY
+#define RDTSC
 //#undef TEST_CONSENSUS_LATENCY
 
 #include <stdlib.h>
@@ -96,6 +97,7 @@ FILE *lzyang_fp_ack;
 #endif
 
 struct timespec con_start, con_end;
+HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 #ifdef TEST_CONSENSUS_LATENCY
 FILE *fp_consensus_latency;
 #endif
@@ -1801,15 +1803,26 @@ commit_new_entries()
         //info_wtime(log_fp, "TRY TO COMMIT NEW ENTRY\n");
         //INFO_PRINT_LOG(log_fp, data.log);
 #ifdef TEST_CONSENSUS_LATENCY
+#ifdef RDTSC
+        HRT_GET_TIMESTAMP(rdtsc_start);
+#else
         clock_gettime(CLOCK_MONOTONIC, &con_start);
+#endif
 #endif
         rc = dare_ib_write_remote_logs(1);
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
 #ifdef TEST_CONSENSUS_LATENCY
+#ifdef RDTSC
+        HRT_GET_TIMESTAMP(rdtsc_end);
+        uint64_t rdtsc_interval;
+        HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_interval);
+        fprintf(fp_consensus_latency, "%9.3lf\t%"PRIu64"\n", HRT_GET_NSEC(rdtsc_interval), data.log->end);
+#else
         clock_gettime(CLOCK_MONOTONIC, &con_end);
         uint64_t inter = 1e9 * (con_end.tv_sec - con_start.tv_sec) + (con_end.tv_nsec - con_start.tv_nsec);
         fprintf(fp_consensus_latency, "%"PRIu64"\t%"PRIu64"\n", inter, data.log->end);
+#endif
 #endif
         if (0 != rc) {
             error(log_fp, "Cannot write remote logs\n");

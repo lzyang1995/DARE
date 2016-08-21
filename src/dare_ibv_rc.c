@@ -11,6 +11,7 @@
 //#define lzyang
 #define lzyang_p
 #define TEST_POST_SEND_INTERVAL
+#define RDTSC
 
 //#ifdef lzyang
 #include <time.h>
@@ -52,6 +53,7 @@ extern FILE *lzyang_fp_ack;
 #ifdef TEST_POST_SEND_INTERVAL
 extern FILE * post_send_inter;
 struct timespec start, end;
+HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 extern int lzyang_first;
 #endif
 
@@ -1622,6 +1624,22 @@ else {
 #endif
 
 #ifdef TEST_POST_SEND_INTERVAL
+#ifdef RDTSC
+        if(lzyang_first == 0)
+        {
+            lzyang_first = 1;
+            HRT_GET_TIMESTAMP(rdtsc_start);
+            fprintf(post_send_inter, "p%d\t%d\t\t%"PRIu64"\t0\n", i, server->next_lr_step, server->cached_end_offset);
+        }
+        else
+        {
+            HRT_GET_TIMESTAMP(rdtsc_end);
+            uint64_t rdtsc_wor;
+            HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
+            rdtsc_start = rdtsc_end;
+            fprintf(post_send_inter, "p%d\t%d\t\t%"PRIu64"\t%9.3lf\n", i, server->next_lr_step, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
+        }
+#else
         if(lzyang_first == 0)
         {
             lzyang_first = 1;
@@ -1637,6 +1655,7 @@ else {
             start = end;
             fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset, wor);
         }
+#endif
 #endif
 #ifdef DEBUG
         rc = 
@@ -1825,6 +1844,16 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
 #endif
 
 #ifdef TEST_POST_SEND_INTERVAL
+#ifdef RDTSC
+        if(lzyang_first != 0)
+        {
+            HRT_GET_TIMESTAMP(rdtsc_end);
+            uint64_t rdtsc_wor;
+            HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
+            rdtsc_start = rdtsc_end;
+            fprintf(post_send_inter, "p%d\tUP COMMIT END\t\t%"PRIu64"\t%9.3lf\n", i, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
+        }
+#else
         if(lzyang_first != 0)
         {
             clock_gettime(CLOCK_MONOTONIC, &end);
@@ -1833,6 +1862,7 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
             start = end;
             fprintf(post_send_inter, "%"PRIu64"\tp%d\tUP COMMIT END\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->cached_end_offset, wor);
         }
+#endif
 #endif
 
 #ifdef DEBUG 
@@ -3165,6 +3195,16 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
 //TIMER_INFO(log_fp, "[p%"PRIu8"->log(:%"PRIu64")]\n", idx, server->cached_end_offset);
                         server->send_flag = 1;
 #ifdef TEST_POST_SEND_INTERVAL
+#ifdef RDTSC
+                        if(lzyang_first != 0)
+                        {
+                            HRT_GET_TIMESTAMP(rdtsc_end);
+                            uint64_t rdtsc_wor;
+                            HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
+                            rdtsc_start = rdtsc_end;
+                            fprintf(post_send_inter, "p%d\tACK OF C\t\t%"PRIu64"\t%9.3lf\n", i, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
+                        }
+#else
                         if(lzyang_first != 0)
                         {
                             clock_gettime(CLOCK_MONOTONIC, &end);
@@ -3173,6 +3213,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                             start = end;
                             fprintf(post_send_inter, "%"PRIu64"\tp%d\tACK OF C\t%"PRIu64"\t%"PRIu64"\n", stamp, idx, server->cached_end_offset, wor);
                         }
+#endif
 #endif
 #ifdef lzyang
                         if(lzyang_flag == 1)
@@ -3204,6 +3245,16 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
 //TIMER_INFO(log_fp, "[p%"PRIu8"->e=%"PRIu64"]\n", idx, SRV_DATA->ctrl_data->log_offsets[idx].end);
                 server->send_flag = 1;
 #ifdef TEST_POST_SEND_INTERVAL
+#ifdef RDTSC
+                if(lzyang_first != 0)
+                {
+                    HRT_GET_TIMESTAMP(rdtsc_end);
+                    uint64_t rdtsc_wor;
+                    HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
+                    rdtsc_start = rdtsc_end;
+                    fprintf(post_send_inter, "p%d\tACK OF D\t\t%"PRIu64"\t%9.3lf\n", i, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
+                }
+#else
                 if(lzyang_first != 0)
                 {
                     clock_gettime(CLOCK_MONOTONIC, &end);
@@ -3212,6 +3263,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                     start = end;
                     fprintf(post_send_inter, "%"PRIu64"\tp%d\tACK OF D\t%"PRIu64"\t%"PRIu64"\n", stamp, idx, server->cached_end_offset, wor);
                 }
+#endif
 #endif
 
 #ifdef lzyang
