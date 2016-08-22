@@ -12,10 +12,11 @@
 #define lzyang_p
 #define TEST_POST_SEND_INTERVAL
 #define BREAKDOWN_600NS
-//#define RDTSC
+#define RDTSC
 
 //#undef RDTSC
-#undef TEST_POST_SEND_INTERVAL
+//#undef TEST_POST_SEND_INTERVAL
+#undef BREAKDOWN_600NS
 //#ifdef lzyang
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;
@@ -77,8 +78,21 @@ extern dare_ib_device_t *dare_ib_device;
 
 uint64_t ssn;   // Send Sequence Number
 int wa_flag;
-static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 
+//static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
+#ifdef TEST_POST_SEND_INTERVAL
+char * lzyang_phase[6] = {"POSTING C", "POSTING D", "UP COMMIT END", "ACK OF C", "ACK OF D", "UNKNOWN"};
+struct lzyang_timestamp
+{
+    HRT_TIMESTAMP_T stamp;
+    int i;
+    char * str;
+    uint64_t end_offset;
+};
+typedef struct lzyang_timestamp lzyang_timestamp;
+lzyang_timestamp stamp_array[50] = {0};
+int stamp_num = 0;
+#endif
 /* ================================================================== */
 
 static int
@@ -1641,20 +1655,16 @@ else {
 
 #ifdef TEST_POST_SEND_INTERVAL
 #ifdef RDTSC
-        if(lzyang_first == 0)
-        {
-            lzyang_first = 1;
-            HRT_GET_TIMESTAMP(rdtsc_start);
-            fprintf(post_send_inter, "p%d\t%d\t\t%"PRIu64"\t0\n", i, server->next_lr_step, server->cached_end_offset);
-        }
+        HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+        stamp_array[stamp_num].i = i;
+        if(server->next_lr_step == LR_UPDATE_LOG)
+            stamp_array[stamp_num].str = lzyang_phase[0];
+        else if(server->next_lr_step == LR_UPDATE_END)
+            stamp_array[stamp_num].str = lzyang_phase[1];
         else
-        {
-            HRT_GET_TIMESTAMP(rdtsc_end);
-            uint64_t rdtsc_wor;
-            HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
-            rdtsc_start = rdtsc_end;
-            fprintf(post_send_inter, "p%d\t%d\t\t%"PRIu64"\t%9.3lf\n", i, server->next_lr_step, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
-        }
+            stamp_array[stamp_num].str = lzyang_phase[5];
+        stamp_array[stamp_num].end_offset = server->cached_end_offset;
+        stamp_num ++;
 #else
         if(lzyang_first == 0)
         {
@@ -1871,14 +1881,11 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
 
 #ifdef TEST_POST_SEND_INTERVAL
 #ifdef RDTSC
-        if(lzyang_first != 0)
-        {
-            HRT_GET_TIMESTAMP(rdtsc_end);
-            uint64_t rdtsc_wor;
-            HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
-            rdtsc_start = rdtsc_end;
-            fprintf(post_send_inter, "p%d\tUP COMMIT END\t%"PRIu64"\t%9.3lf\n", i, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
-        }
+        HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+        stamp_array[stamp_num].i = i;
+        stamp_array[stamp_num].str = lzyang_phase[2];
+        stamp_array[stamp_num].end_offset = server->cached_end_offset;
+        stamp_num ++;
 #else
         if(lzyang_first != 0)
         {
@@ -3301,14 +3308,11 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                         server->send_flag = 1;
 #ifdef TEST_POST_SEND_INTERVAL
 #ifdef RDTSC
-                        if(lzyang_first != 0)
-                        {
-                            HRT_GET_TIMESTAMP(rdtsc_end);
-                            uint64_t rdtsc_wor;
-                            HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
-                            rdtsc_start = rdtsc_end;
-                            fprintf(post_send_inter, "p%d\tACK OF C\t%"PRIu64"\t%9.3lf\n", idx, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
-                        }
+                        HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+                        stamp_array[stamp_num].i = idx;
+                        stamp_array[stamp_num].str = lzyang_phase[3];
+                        stamp_array[stamp_num].end_offset = server->cached_end_offset;
+                        stamp_num ++;
 #else
                         if(lzyang_first != 0)
                         {
@@ -3351,14 +3355,11 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                 server->send_flag = 1;
 #ifdef TEST_POST_SEND_INTERVAL
 #ifdef RDTSC
-                if(lzyang_first != 0)
-                {
-                    HRT_GET_TIMESTAMP(rdtsc_end);
-                    uint64_t rdtsc_wor;
-                    HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_wor);
-                    rdtsc_start = rdtsc_end;
-                    fprintf(post_send_inter, "p%d\tACK OF D\t%"PRIu64"\t%9.3lf\n", idx, server->cached_end_offset, HRT_GET_NSEC(rdtsc_wor));
-                }
+                HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+                stamp_array[stamp_num].i = i;
+                stamp_array[stamp_num].str = lzyang_phase[4];
+                stamp_array[stamp_num].end_offset = server->cached_end_offset;
+                stamp_num ++;
 #else
                 if(lzyang_first != 0)
                 {

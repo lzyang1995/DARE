@@ -12,11 +12,12 @@
 #define TEST_POST_SEND_INTERVAL
 #define TEST_CONSENSUS_LATENCY
 #define BREAKDOWN_600NS
-//#define RDTSC
+#define RDTSC
 
 //#undef RDTSC
-#undef TEST_POST_SEND_INTERVAL
-//#undef TEST_CONSENSUS_LATENCY
+//#undef TEST_POST_SEND_INTERVAL
+#undef TEST_CONSENSUS_LATENCY
+#undef BREAKDOWN_600NS
 
 #include <stdlib.h>
 #include <string.h>
@@ -115,6 +116,12 @@ FILE *breakdown_600ns;
 //measurment latency
 FILE *ml_latency;
 static struct timespec ml_start, ml_end;
+#endif
+
+#ifdef TEST_POST_SEND_INTERVAL
+extern char * lzyang_phase[6];
+extern lzyang_timestamp stamp_array[50];
+extern int stamp_num;
 #endif
 
 /* server data */
@@ -1883,6 +1890,22 @@ commit_new_entries()
             }
         }
     }
+
+#ifdef TEST_POST_SEND_INTERVAL
+    int ii;
+    for(ii = 0;ii < stamp_num;ii++)
+    {
+        if(ii = 0)
+            fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
+        else
+        {
+            uint64_t ticks;
+            HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
+            fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
+        }
+    }
+    stamp_num = 0;
+#endif
 }
 
 /**
