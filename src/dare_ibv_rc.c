@@ -1659,14 +1659,14 @@ else {
 #ifdef TEST_POST_SEND_INTERVAL
         in_flag = 1;
 #ifdef RDTSC
-        HRT_GET_TIMESTAMP(begin_t);
+        //HRT_GET_TIMESTAMP(begin_t);
         //get the time of the follwing operation
         HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
 
-        HRT_GET_TIMESTAMP(end_t);
-        uint64_t var;
-        HRT_GET_ELAPSED_TICKS(begin_t, end_t, &var);
-        fprintf(temp, "%9.3lf\n", HRT_GET_NSEC(var));
+        //HRT_GET_TIMESTAMP(end_t);
+        //uint64_t var;
+        //HRT_GET_ELAPSED_TICKS(begin_t, end_t, &var);
+        //fprintf(temp, "%9.3lf\n", HRT_GET_NSEC(var));
 
         stamp_array[stamp_num].i = i;
         if(server->next_lr_step == LR_UPDATE_LOG)
