@@ -119,6 +119,14 @@ static struct timespec ml_start, ml_end;
 #endif
 
 #ifdef TEST_POST_SEND_INTERVAL
+struct lzyang_timestamp
+{
+    HRT_TIMESTAMP_T stamp;
+    int i;
+    char * str;
+    uint64_t end_offset;
+};
+typedef struct lzyang_timestamp lzyang_timestamp;
 extern char * lzyang_phase[6];
 extern lzyang_timestamp stamp_array[50];
 extern int stamp_num;
