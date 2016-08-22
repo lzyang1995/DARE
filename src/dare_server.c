@@ -131,6 +131,7 @@ extern char * lzyang_phase[6];
 extern lzyang_timestamp stamp_array[50];
 extern int stamp_num;
 extern int in_flag;
+FILE *temp;
 #endif
 
 /* server data */
@@ -257,6 +258,7 @@ int dare_server_init( dare_server_input_t *input )
 #endif
 #ifdef TEST_POST_SEND_INTERVAL
     post_send_inter = fopen("./opst_send_inter", "w");
+    temp = fopen("./temp", "w");
 #endif
 
 #ifdef BREAKDOWN_600NS
