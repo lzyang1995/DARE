@@ -1900,6 +1900,7 @@ commit_new_entries()
             }
         }
     }
+/*
 #ifdef TEST_POST_SEND_INTERVAL
         if(in_flag == 1)
         {
@@ -1919,6 +1920,7 @@ commit_new_entries()
             in_flag = 0;
         }
 #endif
+*/
 }
 
 /**
