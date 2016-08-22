@@ -1900,14 +1900,13 @@ commit_new_entries()
             }
         }
     }
-/*
 #ifdef TEST_POST_SEND_INTERVAL
         if(in_flag == 1)
         {
             int ii;
             for(ii = 0;ii < stamp_num;ii++)
             {
-                if(ii = 0)
+                if(ii == 0)
                     fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
                 else
                 {
@@ -1920,7 +1919,6 @@ commit_new_entries()
             in_flag = 0;
         }
 #endif
-*/
 }
 
 /**
