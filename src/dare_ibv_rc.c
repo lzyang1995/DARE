@@ -1923,6 +1923,8 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
         TIMER_STOP(log_fp);
     }
 //HRT_GET_TIMESTAMP(SRV_DATA->t2);
+
+    stamp_num = 0;
     
     return RC_SUCCESS;
 }
