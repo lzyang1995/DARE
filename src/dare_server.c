@@ -1846,6 +1846,23 @@ commit_new_entries()
         rc = dare_ib_write_remote_logs(1);
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
+
+#ifdef TEST_POST_SEND_INTERVAL
+        int ii;
+        for(ii = 0;ii < stamp_num;ii++)
+        {
+            if(ii = 0)
+                fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
+            else
+            {
+                uint64_t ticks;
+                HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
+                fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
+            }
+        }
+        stamp_num = 0;
+#endif
+
 #ifdef TEST_CONSENSUS_LATENCY
 #ifdef RDTSC
 
@@ -1898,22 +1915,6 @@ commit_new_entries()
             }
         }
     }
-
-#ifdef TEST_POST_SEND_INTERVAL
-    int ii;
-    for(ii = 0;ii < stamp_num;ii++)
-    {
-        if(ii = 0)
-            fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
-        else
-        {
-            uint64_t ticks;
-            HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
-            fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
-        }
-    }
-    stamp_num = 0;
-#endif
 }
 
 /**
