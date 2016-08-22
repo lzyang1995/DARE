@@ -15,7 +15,7 @@
 #define RDTSC
 
 //#undef RDTSC
-//#undef TEST_POST_SEND_INTERVAL
+#undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
 //#ifdef lzyang
 #include <time.h>
