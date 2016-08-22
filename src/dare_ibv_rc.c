@@ -1657,20 +1657,15 @@ else {
 #ifdef TEST_POST_SEND_INTERVAL
         in_flag = 1;
 #ifdef RDTSC
-        printf("11111111111111111111111111111111111111111111111\n");
         HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
-        printf("22222222222222222222222222222222222222222222222\n");
         stamp_array[stamp_num].i = i;
-        printf("33333333333333333333333333333333333333333333333\n");
         if(server->next_lr_step == LR_UPDATE_LOG)
             stamp_array[stamp_num].str = lzyang_phase[0];
         else if(server->next_lr_step == LR_UPDATE_END)
             stamp_array[stamp_num].str = lzyang_phase[1];
         else
             stamp_array[stamp_num].str = lzyang_phase[5];
-        printf("44444444444444444444444444444444444444444444444\n");
         stamp_array[stamp_num].end_offset = server->cached_end_offset;
-        printf("55555555555555555555555555555555555555555555555\n");
         stamp_num ++;
 #else
         if(lzyang_first == 0)
@@ -1924,7 +1919,7 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
     }
 //HRT_GET_TIMESTAMP(SRV_DATA->t2);
 
-    stamp_num = 0;
+    //stamp_num = 0;
     
     return RC_SUCCESS;
 }
