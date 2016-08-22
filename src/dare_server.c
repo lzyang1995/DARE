@@ -15,8 +15,8 @@
 #define RDTSC
 
 //#undef RDTSC
-#undef TEST_POST_SEND_INTERVAL
-//#undef TEST_CONSENSUS_LATENCY
+//#undef TEST_POST_SEND_INTERVAL
+#undef TEST_CONSENSUS_LATENCY
 #undef BREAKDOWN_600NS
 
 #include <stdlib.h>
