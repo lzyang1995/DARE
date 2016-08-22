@@ -3356,7 +3356,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
 #ifdef TEST_POST_SEND_INTERVAL
 #ifdef RDTSC
                 HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
-                stamp_array[stamp_num].i = i;
+                stamp_array[stamp_num].i = idx;
                 stamp_array[stamp_num].str = lzyang_phase[4];
                 stamp_array[stamp_num].end_offset = server->cached_end_offset;
                 stamp_num ++;
