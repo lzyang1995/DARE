@@ -92,6 +92,7 @@ struct lzyang_timestamp
 typedef struct lzyang_timestamp lzyang_timestamp;
 lzyang_timestamp stamp_array[50] = {0};
 int stamp_num = 0;
+int in_flag = 0;
 #endif
 /* ================================================================== */
 
@@ -1654,6 +1655,7 @@ else {
 #endif
 
 #ifdef TEST_POST_SEND_INTERVAL
+        in_flag = 1;
 #ifdef RDTSC
         HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
         stamp_array[stamp_num].i = i;

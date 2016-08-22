@@ -130,6 +130,7 @@ typedef struct lzyang_timestamp lzyang_timestamp;
 extern char * lzyang_phase[6];
 extern lzyang_timestamp stamp_array[50];
 extern int stamp_num;
+extern int in_flag;
 #endif
 
 /* server data */
@@ -1848,19 +1849,23 @@ commit_new_entries()
         /* loop_for_commit used to avoid going back through libev before the commit is over */
 
 #ifdef TEST_POST_SEND_INTERVAL
-        int ii;
-        for(ii = 0;ii < stamp_num;ii++)
+        if(in_flag == 1)
         {
-            if(ii = 0)
-                fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
-            else
+            int ii;
+            for(ii = 0;ii < stamp_num;ii++)
             {
-                uint64_t ticks;
-                HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
-                fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
+                if(ii = 0)
+                    fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
+                else
+                {
+                    uint64_t ticks;
+                    HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
+                    fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
+                }
             }
+            stamp_num = 0;
+            in_flag = 0;
         }
-        stamp_num = 0;
 #endif
 
 #ifdef TEST_CONSENSUS_LATENCY
