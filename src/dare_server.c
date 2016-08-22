@@ -1847,7 +1847,7 @@ commit_new_entries()
         rc = dare_ib_write_remote_logs(1);
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
-
+/*
 #ifdef TEST_POST_SEND_INTERVAL
         if(in_flag == 1)
         {
@@ -1867,6 +1867,7 @@ commit_new_entries()
             in_flag = 0;
         }
 #endif
+*/
 
 #ifdef TEST_CONSENSUS_LATENCY
 #ifdef RDTSC
