@@ -82,7 +82,7 @@ int wa_flag;
 
 //static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 #ifdef TEST_POST_SEND_INTERVAL
-char * lzyang_phase[6] = {"POSTING C", "POSTING D", "UP COMMIT END", "ACK OF C", "ACK OF D", "UNKNOWN"};
+char * lzyang_phase[] = {"POSTING C", "POSTING D", "UP COMMIT END", "ACK OF C", "ACK OF D", "UNKNOWN", "BEF POST SEND", "AFT POST SEND", "BEF POLL CQ", "AFT POLL CQ", "BEF PORC WC", "AFT PROC WC"};
 struct lzyang_timestamp
 {
     HRT_TIMESTAMP_T stamp;
@@ -91,7 +91,7 @@ struct lzyang_timestamp
     uint64_t end_offset;
 };
 typedef struct lzyang_timestamp lzyang_timestamp;
-lzyang_timestamp stamp_array[50];
+lzyang_timestamp stamp_array[500];
 int stamp_num = 0;
 int in_flag = 0;
 static HRT_TIMESTAMP_T begin_t, end_t;
@@ -1659,7 +1659,7 @@ else {
 #ifdef TEST_POST_SEND_INTERVAL
         in_flag = 1;
 #ifdef RDTSC
-        HRT_GET_TIMESTAMP(begin_t);
+        //HRT_GET_TIMESTAMP(begin_t);
         //get the time of the follwing operation
         HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
         stamp_array[stamp_num].i = i;
@@ -1672,10 +1672,10 @@ else {
         stamp_array[stamp_num].end_offset = server->cached_end_offset;
         stamp_num ++;
         //********************************************
-        HRT_GET_TIMESTAMP(end_t);
-        uint64_t var;
-        HRT_GET_ELAPSED_TICKS(begin_t, end_t, &var);
-        fprintf(temp, "%9.3lf\n", HRT_GET_NSEC(var));
+        //HRT_GET_TIMESTAMP(end_t);
+        //uint64_t var;
+        //HRT_GET_ELAPSED_TICKS(begin_t, end_t, &var);
+        //fprintf(temp, "%9.3lf\n", HRT_GET_NSEC(var));
 #else
         if(lzyang_first == 0)
         {
@@ -1693,12 +1693,6 @@ else {
             fprintf(post_send_inter, "%"PRIu64"\tp%d\t%d\t\t%"PRIu64"\t%"PRIu64"\n", stamp, i, server->next_lr_step, server->cached_end_offset, wor);
         }
 #endif
-#endif
-
-#ifdef BREAKDOWN_600NS
-        clock_gettime(CLOCK_MONOTONIC, &break_start);
-        uint64_t break_stamp = 1e9 * break_start.tv_sec + break_start.tv_nsec;
-        fprintf(breakdown_600ns, "%"PRIu64"\tp%d\t%d\t\t%"PRIu64"\n", break_stamp, i, server->next_lr_step, server->cached_end_offset);
 #endif
 
 #ifdef DEBUG
@@ -2651,43 +2645,25 @@ post_send( uint8_t server_id,
     }   
     wr.wr.rdma.remote_addr = rm.raddr;
     wr.wr.rdma.rkey        = rm.rkey;
-#ifdef BREAKDOWN_600NS
-    
-    if(in_loop == 1)
+#ifdef TEST_POST_SEND_INTERVAL
+    if(in_flag == 1)
     {
-        //clock_gettime(CLOCK_MONOTONIC, &ml_start);
-
-        //start
-        clock_gettime(CLOCK_MONOTONIC, &break_end);
-        uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-        uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-        break_start = break_end;
-        //end
-
-        //clock_gettime(CLOCK_MONOTONIC, &ml_end);
-        //uint64_t ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
-        //fprintf(ml_latency, "%"PRIu64"\t", ml_interval);
-
-        //clock_gettime(CLOCK_MONOTONIC, &ml_start);
-
-        //start
-        fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
-        //end
-
-        //clock_gettime(CLOCK_MONOTONIC, &ml_end);
-        //ml_interval = 1e9 * (ml_end.tv_sec - ml_start.tv_sec) + (ml_end.tv_nsec - ml_start.tv_nsec);
-        //fprintf(ml_latency, "%"PRIu64"\n", ml_interval);
+        HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+        stamp_array[stamp_num].i = server_id;
+        stamp_array[stamp_num].str = lzyang_phase[6];
+        stamp_array[stamp_num].end_offset = SRV_DATA->config.servers[server_id].cached_end_offset;
+        stamp_num ++;
     }
 #endif
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
-#ifdef BREAKDOWN_600NS
-    if(in_loop == 1)
+#ifdef TEST_POST_SEND_INTERVAL
+    if(in_flag == 1)
     {
-        clock_gettime(CLOCK_MONOTONIC, &break_end);
-        uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-        uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-        break_start = break_end;
-        fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_post_send\t%"PRIu64"\n", break_stamp, break_interval);
+        HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+        stamp_array[stamp_num].i = server_id;
+        stamp_array[stamp_num].str = lzyang_phase[7];
+        stamp_array[stamp_num].end_offset = SRV_DATA->config.servers[server_id].cached_end_offset;
+        stamp_num ++;
     }
 #endif
     if (0 != rc) {
@@ -2727,26 +2703,26 @@ empty_completion_queue( uint8_t server_id,
     
     while(1) {
         /* Read as many WCs as possible ... */
-#ifdef BREAKDOWN_600NS
-        if(in_loop == 1)
+#ifdef TEST_POST_SEND_INTERVAL
+        if(in_flag == 1)
         {
-            clock_gettime(CLOCK_MONOTONIC, &break_end);
-            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-            break_start = break_end;
-            fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE ibv_poll_cq\t%"PRIu64"\n", break_stamp, break_interval);
+            HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+            stamp_array[stamp_num].i = server_id;
+            stamp_array[stamp_num].str = lzyang_phase[8];
+            stamp_array[stamp_num].end_offset = SRV_DATA->config.servers[server_id].cached_end_offset;
+            stamp_num ++;
         }
 #endif
         ne = ibv_poll_cq(IBDEV->rc_cq[qp_id], IBDEV->rc_cqe, 
                         IBDEV->rc_wc_array);
-#ifdef BREAKDOWN_600NS
-        if(in_loop == 1)
+#ifdef TEST_POST_SEND_INTERVAL
+        if(in_flag == 1)
         {
-            clock_gettime(CLOCK_MONOTONIC, &break_end);
-            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-            break_start = break_end;
-            fprintf(breakdown_600ns, "%"PRIu64"\tAFTER ibv_poll_cq\t%"PRIu64"\n", break_stamp, break_interval);
+            HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+            stamp_array[stamp_num].i = server_id;
+            stamp_array[stamp_num].str = lzyang_phase[9];
+            stamp_array[stamp_num].end_offset = SRV_DATA->config.servers[server_id].cached_end_offset;
+            stamp_num ++;
         }
 #endif
         if (0 == ne) {
@@ -2781,14 +2757,14 @@ empty_completion_queue( uint8_t server_id,
         }
 #endif 
 
-#ifdef BREAKDOWN_600NS
-        if(in_loop == 1)
+#ifdef TEST_POST_SEND_INTERVAL
+        if(in_flag == 1)
         {
-            clock_gettime(CLOCK_MONOTONIC, &break_end);
-            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-            break_start = break_end;
-            fprintf(breakdown_600ns, "%"PRIu64"\tBEFORE PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
+            HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+            stamp_array[stamp_num].i = server_id;
+            stamp_array[stamp_num].str = lzyang_phase[10];
+            stamp_array[stamp_num].end_offset = SRV_DATA->config.servers[server_id].cached_end_offset;
+            stamp_num ++;
         }
 #endif
         //info_wtime(log_fp, "ne=%d\n", ne);
@@ -2919,14 +2895,14 @@ from the queues. */
                 info_wtime(log_fp, "Software bug!!!!!\n");
             }
         }
-#ifdef BREAKDOWN_600NS
-        if(in_loop == 1)
+#ifdef TEST_POST_SEND_INTERVAL
+        if(in_flag == 1)
         {
-            clock_gettime(CLOCK_MONOTONIC, &break_end);
-            uint64_t break_stamp = 1e9 * break_end.tv_sec + break_end.tv_nsec;
-            uint64_t break_interval = 1e9 * (break_end.tv_sec - break_start.tv_sec) + (break_end.tv_nsec - break_start.tv_nsec);
-            break_start = break_end;
-            fprintf(breakdown_600ns, "%"PRIu64"\tAFTER PROCESSING %d WCs\t%"PRIu64"\n", break_stamp, ne, break_interval);
+            HRT_GET_TIMESTAMP(stamp_array[stamp_num].stamp);
+            stamp_array[stamp_num].i = server_id;
+            stamp_array[stamp_num].str = lzyang_phase[11];
+            stamp_array[stamp_num].end_offset = SRV_DATA->config.servers[server_id].cached_end_offset;
+            stamp_num ++;
         }
 #endif
     }
