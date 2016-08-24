@@ -2712,7 +2712,7 @@ int_handler(int dummy)
     //dare_server_shutdown();
 #ifdef TEST_CONSENSUS_LATENCY
     uint32_t i;
-    for(i = 0;i < ARRAY_LEN;i++)
+    for(i = 0;i < l_count;i++)
         fprintf(fp_consensus_latency, "%9lf\n", HRT_GET_NSEC(latency[i]));
 #endif
 
