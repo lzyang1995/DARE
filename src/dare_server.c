@@ -11,12 +11,13 @@
 //#define lzyang
 #define TEST_POST_SEND_INTERVAL
 #define TEST_CONSENSUS_LATENCY
+#define TEST_CALL_NUM
 #define BREAKDOWN_600NS
 #define RDTSC
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
-//#undef TEST_CONSENSUS_LATENCY
+#undef TEST_CONSENSUS_LATENCY
 #undef BREAKDOWN_600NS
 
 #include <stdlib.h>
@@ -162,6 +163,14 @@ ev_timer to_adjust_event;
 /* A timer event for log pruning */
 ev_timer prune_event;
 
+#ifdef TEST_CALL_NUM
+FILE *fp_test_call_num;
+uint32_t post_send_count[2];   //post_send[0]: number of posting C; post_send[1]: number of posting D
+#define POLL_CQ_SIZE 50
+uint32_t poll_cq_count[POLL_CQ_SIZE];   //poll_cq_count[i]: i WCs polled; 
+int in_test_call_num = 0;
+#endif
+
 /* ================================================================== */
 /* local function - prototypes */
 
@@ -267,6 +276,14 @@ int dare_server_init( dare_server_input_t *input )
 #ifdef BREAKDOWN_600NS
     breakdown_600ns = fopen("./breakdown_600ns", "w");
     ml_latency = fopen("./ml_latency", "w");
+#endif
+
+#ifdef TEST_CALL_NUM
+    fp_test_call_num = fopen("./test_call_num", "w");
+    post_send_count[0] = post_send_count[1] = 0;
+    uint32_t iii;
+    for(iii = 0;iii < POLL_CQ_SIZE;iii++)
+        poll_cq_count[iii] = 0;
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
@@ -1849,9 +1866,27 @@ commit_new_entries()
         clock_gettime(CLOCK_MONOTONIC, &con_start);
 #endif
 #endif
+
+#ifdef TEST_CALL_NUM
+        post_send_count[0] = post_send_count[1] = 0;
+        uint32_t iii;
+        for(iii = 0;iii < POLL_CQ_SIZE;iii++)
+            poll_cq_count[iii] = 0;
+#endif
         rc = dare_ib_write_remote_logs(1);
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
+
+#ifdef TEST_CALL_NUM
+        if(in_test_call_num == 1)
+        {
+            fprintf(fp_test_call_num, "%"PRIu32"\t%"PRIu32"\t", post_send_count[0], post_send_count[1]);
+            for(iii = 0;iii < data.input->group_size;iii++)
+                fprintf(fp_test_call_num, "%"PRIu32"\t", poll_cq_count[iii]);
+            fprintf(fp_test_call_num, "\n");
+            in_test_call_num = 0;
+        }
+#endif
 
 #ifdef TEST_CONSENSUS_LATENCY
 #ifdef RDTSC

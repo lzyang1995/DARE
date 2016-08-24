@@ -12,6 +12,7 @@
 #define lzyang_p
 #define TEST_POST_SEND_INTERVAL
 #define BREAKDOWN_600NS
+#define TEST_CALL_NUM
 #define RDTSC
 
 //#undef RDTSC
@@ -69,6 +70,14 @@ struct timespec break_start, break_end;
 int in_loop = 0;
 //measurment latency
 struct timespec ml_start, ml_end;
+#endif
+
+#ifdef TEST_CALL_NUM
+extern FILE *fp_test_call_num;
+extern uint32_t post_send_count[2];
+#define POLL_CQ_SIZE 50
+extern uint32_t poll_cq_count[POLL_CQ_SIZE];
+extern int in_test_call_num;
 #endif
 
 /* InfiniBand device */
@@ -1698,6 +1707,14 @@ else {
 #endif
 #endif
 
+#ifdef TEST_CALL_NUM
+        in_test_call_num = 1;
+        if(LR_UPDATE_LOG == server->next_lr_step)
+            post_send_count[0] ++;
+        else
+            post_send_count[1] ++;
+#endif
+
 #ifdef DEBUG
         rc = 
 #endif        
@@ -2724,6 +2741,11 @@ empty_completion_queue( uint8_t server_id,
 #endif
         ne = ibv_poll_cq(IBDEV->rc_cq[qp_id], IBDEV->rc_cqe, 
                         IBDEV->rc_wc_array);
+#ifdef TEST_CALL_NUM
+        if(in_test_call_num == 1)
+            poll_cq_count[ne] ++;
+#endif
+
 #ifdef BREAKDOWN_600NS
 #ifdef TEST_POST_SEND_INTERVAL
         if(in_flag == 1)
