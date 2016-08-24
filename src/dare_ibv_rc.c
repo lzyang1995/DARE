@@ -78,6 +78,7 @@ extern uint32_t post_send_count[2];
 #define POLL_CQ_SIZE 50
 extern uint32_t poll_cq_count[POLL_CQ_SIZE];
 extern int in_test_call_num;
+extern int consensus_end;
 #endif
 
 /* InfiniBand device */
@@ -1923,6 +1924,10 @@ sprintf(posted_sends_str, "%s %d-wr", posted_sends_str, i);
 #endif
 #endif
 
+#ifdef TEST_CALL_NUM
+        consensus_end = 1;
+#endif
+
 #ifdef DEBUG 
         rc = 
 #endif        
@@ -2742,7 +2747,7 @@ empty_completion_queue( uint8_t server_id,
         ne = ibv_poll_cq(IBDEV->rc_cq[qp_id], IBDEV->rc_cqe, 
                         IBDEV->rc_wc_array);
 #ifdef TEST_CALL_NUM
-        if(in_test_call_num == 1)
+        if(in_test_call_num == 1 && consensus_end != 1)
             poll_cq_count[ne] ++;
 #endif
 

@@ -169,6 +169,7 @@ uint32_t post_send_count[2];   //post_send[0]: number of posting C; post_send[1]
 #define POLL_CQ_SIZE 50
 uint32_t poll_cq_count[POLL_CQ_SIZE];   //poll_cq_count[i]: i WCs polled; 
 int in_test_call_num = 0;
+int consensus_end = 0;
 #endif
 
 /* ================================================================== */
@@ -1885,6 +1886,7 @@ commit_new_entries()
                 fprintf(fp_test_call_num, "%"PRIu32"\t", poll_cq_count[iii]);
             fprintf(fp_test_call_num, "\n");
             in_test_call_num = 0;
+            consensus_end = 0;
         }
 #endif
 
