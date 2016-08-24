@@ -12,6 +12,8 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
+#define TEST_CONSENSUS_LATENCY
+
 #include <stdio.h>
 #include <errno.h>
 #define __STDC_FORMAT_MACROS
@@ -21,6 +23,8 @@
 
 //extern struct timeval prev_tv;
 //extern uint64_t jump_cnt;
+
+#ifndef TEST_CONSENSUS_LATENCY
 
 #define info(stream, fmt, ...) do {\
     fprintf(stream, fmt, ##__VA_ARGS__); \
@@ -39,6 +43,13 @@
     fprintf(stream, "[%lu:%06lu] " fmt, _debug_tv.tv_sec, _debug_tv.tv_usec, ##__VA_ARGS__); \
     fflush(stream); \
 } while(0)
+
+#else
+
+#define info(stream, fmt, ...)
+#define info_wtime(stream, fmt, ...)
+
+#endif
 
 #ifdef DEBUG
 #define debug(stream, fmt, ...) do {\
@@ -63,6 +74,7 @@
 #define text_wtime(stream, fmt, ...)
 #endif
 
+#ifndef TEST_CONSENSUS_LATENCY
 //#ifdef DEBUG
 #define error(stream, fmt, ...) do { \
     fprintf(stream, "[ERROR] %s/%d/%s() " fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
@@ -91,6 +103,19 @@
 //#else
 //#define error_exit(rc, stream, fmt, ...) exit(rc)
 //#endif
+#else
+
+#define error(stream, fmt, ...)
+
+#define error_return(rc, stream, fmt, ...) do { \
+    return (rc); \
+} while(0)
+
+#define error_exit(rc, stream, fmt, ...) do { \
+    exit(rc); \
+} while(0)
+
+#endif
 
 #ifndef DEBUG
 #define dump_bytes(stream, addr, len, header) do { \
