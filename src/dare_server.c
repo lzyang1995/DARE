@@ -300,7 +300,11 @@ int dare_server_init( dare_server_input_t *input )
 #endif
 
 #ifdef TEST_CONSENSUS_LATENCY_NEW
-    new_consensus_latency = fopen("./new_consensus_latency", "w");
+    char filename[256] = "./new_consensus_latency";
+    char fileindex[10];
+    sprintf(fileindex, "_%u", input->server_idx);
+    strcat(filename, fileindex);
+    new_consensus_latency = fopen(filename, "w");
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
@@ -2789,7 +2793,8 @@ int_handler(int dummy)
     uint32_t ii;
     for(ii = 0;ii < count__;ii++)
         fprintf(new_consensus_latency, "%9lf\n", HRT_GET_NSEC(overall_latency[ii]));
-    printf("leader\n");
+    fflush(new_consensus_latency);
+    //printf("leader\n");
 #endif
 
     dare_state |= TERMINATE;
