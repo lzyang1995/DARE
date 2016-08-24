@@ -112,7 +112,7 @@ static HRT_TIMESTAMP_T begin_t, end_t;
 #ifdef TEST_CONSENSUS_LATENCY_NEW
 extern FILE *new_consensus_latency;
 extern int num_of_ack_d;
-extern HRT_GET_TIMESTAMP new_start_t1, new_start_t2;
+extern HRT_TIMESTAMP_T new_start_t1, new_start_t2;
 extern int in_new_consensus_latency;
 #endif
 /* ================================================================== */
