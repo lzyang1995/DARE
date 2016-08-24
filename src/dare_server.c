@@ -104,7 +104,10 @@ FILE *lzyang_fp_ack;
 struct timespec con_start, con_end;
 static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 #ifdef TEST_CONSENSUS_LATENCY
+#define ARRAY_LEN 20000
 FILE *fp_consensus_latency;
+uint64_t latency[ARRAY_LEN];
+uint32_t l_count = 0;
 #endif
 #ifdef TEST_POST_SEND_INTERVAL
 int lzyang_first = 0;
@@ -1857,8 +1860,13 @@ commit_new_entries()
         uint64_t rdtsc_interval;
         HRT_GET_ELAPSED_TICKS(rdtsc_start, rdtsc_end, &rdtsc_interval);
         //HRT_GET_NSEC(rdtsc_interval);
+        if(l_count < ARRAY_LEN)
+        {
+            latency[l_count] = rdtsc_interval;
+            l_count ++;
+        }
 
-        fprintf(fp_consensus_latency, "%9.3lf\t%"PRIu64"\n", HRT_GET_NSEC(rdtsc_interval), data.log->end);
+        //fprintf(fp_consensus_latency, "%9.3lf\t%"PRIu64"\n", HRT_GET_NSEC(rdtsc_interval), data.log->end);
 #else
         clock_gettime(CLOCK_MONOTONIC, &ml_start);
 
@@ -2702,6 +2710,12 @@ int_handler(int dummy)
 {
     info_wtime(log_fp,"SIGINT detected; shutdown\n");
     //dare_server_shutdown();
+#ifdef TEST_CONSENSUS_LATENCY
+    uint32_t i;
+    for(i = 0;i < ARRAY_LEN;i++)
+        fprintf(fp_consensus_latency, "%9lf\n", HRT_GET_NSEC(latency[i]));
+#endif
+
     dare_state |= TERMINATE;
 }
 
