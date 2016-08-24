@@ -17,10 +17,11 @@
 #define TEST_CONSENSUS_LATENCY_NEW
 
 //#undef RDTSC
-#undef TEST_POST_SEND_INTERVAL
+//#undef TEST_POST_SEND_INTERVAL
 #undef TEST_CONSENSUS_LATENCY
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
+#undef TEST_CONSENSUS_LATENCY_NEW
 
 #include <stdlib.h>
 #include <string.h>
@@ -374,6 +375,13 @@ void dare_server_shutdown()
     dare_ib_srv_shutdown();
     free_server_data();
     fclose(log_fp);
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+    uint32_t ii;
+    for(ii = 0;ii < count__;ii++)
+        fprintf(new_consensus_latency, "%9lf\n", HRT_GET_NSEC(overall_latency[ii]));
+    fflush(new_consensus_latency);
+    //printf("leader\n");
+#endif
     exit(1);
 }
 
@@ -2788,13 +2796,6 @@ int_handler(int dummy)
     uint32_t i;
     for(i = 0;i < l_count;i++)
         fprintf(fp_consensus_latency, "%9lf\n", HRT_GET_NSEC(latency[i]));
-#endif
-#ifdef TEST_CONSENSUS_LATENCY_NEW
-    uint32_t ii;
-    for(ii = 0;ii < count__;ii++)
-        fprintf(new_consensus_latency, "%9lf\n", HRT_GET_NSEC(overall_latency[ii]));
-    fflush(new_consensus_latency);
-    //printf("leader\n");
 #endif
 
     dare_state |= TERMINATE;
