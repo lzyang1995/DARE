@@ -14,11 +14,13 @@
 #define TEST_CALL_NUM
 #define BREAKDOWN_600NS
 #define RDTSC
+#define TEST_CONSENSUS_LATENCY_NEW
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
 #undef TEST_CONSENSUS_LATENCY
 #undef BREAKDOWN_600NS
+#undef TEST_CALL_NUM
 
 #include <stdlib.h>
 #include <string.h>
@@ -172,6 +174,16 @@ int in_test_call_num = 0;
 int consensus_end = 0;
 #endif
 
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+FILE *new_consensus_latency;
+int num_of_ack_d = 0;
+HRT_GET_TIMESTAMP new_start_t1, new_start_t2;
+int in_new_consensus_latency = 0;
+#define ARRAY_LEN 20000
+uint64_t overall_latency[ARRAY_LEN];
+uint32_t count__ = 0;
+#endif
+
 /* ================================================================== */
 /* local function - prototypes */
 
@@ -285,6 +297,10 @@ int dare_server_init( dare_server_input_t *input )
     uint32_t iii;
     for(iii = 0;iii < POLL_CQ_SIZE;iii++)
         poll_cq_count[iii] = 0;
+#endif
+
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+    new_consensus_latency = fopen("./new_consensus_latency", "w");
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
@@ -1874,9 +1890,26 @@ commit_new_entries()
         for(iii = 0;iii < POLL_CQ_SIZE;iii++)
             poll_cq_count[iii] = 0;
 #endif
+
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+        HRT_GET_TIMESTAMP(new_start_t1);
+#endif
         rc = dare_ib_write_remote_logs(1);
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
+
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+        if(in_new_consensus_latency == 1)
+        {
+            if(count__ < ARRAY_LEN)
+            {
+                HRT_GET_ELAPSED_TICKS(new_start_t1, new_start_t2, &overall_latency[count__]);
+                count__ ++;
+            }
+            num_of_ack_d = 0;
+            in_new_consensus_latency = 0;
+        }
+#endif
 
 #ifdef TEST_CALL_NUM
         if(in_test_call_num == 1)
@@ -2751,6 +2784,12 @@ int_handler(int dummy)
     uint32_t i;
     for(i = 0;i < l_count;i++)
         fprintf(fp_consensus_latency, "%9lf\n", HRT_GET_NSEC(latency[i]));
+#endif
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+    uint32_t ii;
+    for(ii = 0;ii < count__;ii++)
+        fprintf(new_consensus_latency, "%9lf\n", HRT_GET_NSEC(overall_latency[ii]));
+    printf("leader\n");
 #endif
 
     dare_state |= TERMINATE;

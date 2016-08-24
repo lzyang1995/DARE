@@ -14,10 +14,12 @@
 #define BREAKDOWN_600NS
 #define TEST_CALL_NUM
 #define RDTSC
+#define TEST_CONSENSUS_LATENCY_NEW
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
+#undef TEST_CALL_NUM
 //#ifdef lzyang
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;
@@ -105,6 +107,13 @@ lzyang_timestamp stamp_array[500];
 int stamp_num = 0;
 int in_flag = 0;
 static HRT_TIMESTAMP_T begin_t, end_t;
+#endif
+
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+extern FILE *new_consensus_latency;
+extern int num_of_ack_d;
+extern HRT_GET_TIMESTAMP new_start_t1, new_start_t2;
+extern int in_new_consensus_latency;
 #endif
 /* ================================================================== */
 
@@ -1714,6 +1723,10 @@ else {
             post_send_count[0] ++;
         else
             post_send_count[1] ++;
+#endif
+
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+        in_new_consensus_latency = 1;
 #endif
 
 #ifdef DEBUG
@@ -3413,6 +3426,16 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                     uint64_t lzyang_interval = 1e9 * (lzyang_now.tv_sec - lzyang_start.tv_sec) + (lzyang_now.tv_nsec - lzyang_start.tv_nsec);
                     fprintf(lzyang_fp_ack, "%"PRIu64"\t\tp%"PRIu8"\t\tLR_UPDATE_END\t\t%"PRIu64"\n", lzyang_interval, idx, server->cached_end_offset);
                 }   
+#endif
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+                if(in_new_consensus_latency == 1)
+                {
+                    num_of_ack_d ++;
+                    if(num_of_ack_d == SRV_DATA->input->group_size / 2)
+                    {
+                        HRT_GET_TIMESTAMP(new_start_t2);
+                    }
+                }
 #endif
             }
         }
