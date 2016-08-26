@@ -2751,8 +2751,37 @@ post_send( uint8_t server_id,
         error_return(1, log_fp, "ibv_post_send failed because %s [%s]\n", 
             strerror(rc), rc == EINVAL ? "EINVAL" : rc == ENOMEM ? "ENOMEM" : rc == EFAULT ? "EFAULT" : "UNKNOWN");
     }
-    
+#ifdef BREAKDOWN_300NS
+    HRT_GET_TIMESTAMP(b_start);
+#endif
     rc = empty_completion_queue(server_id, qp_id, wait_signaled_wr, posted_sends);
+#ifdef BREAKDOWN_300NS
+    if(c_in == 1 || d_in == 1)
+    {
+        if(c_in == 1)
+        {
+            if(c_count < ARRAY_LEN)
+            {
+                HRT_GET_TIMESTAMP(b_end);
+                HRT_GET_ELAPSED_TICKS(b_start, b_end, &c_array[c_count]);
+                c_count++;
+            }
+        }
+
+        if(d_in == 1)
+        {
+            if(d_count < ARRAY_LEN)
+            {
+                HRT_GET_TIMESTAMP(b_end);
+                HRT_GET_ELAPSED_TICKS(b_start, b_end, &d_array[d_count]);
+                d_count++;
+            }
+        }
+
+        c_in = 0;
+        d_in = 0;
+    }
+#endif
     if (0 != rc) {
         error_return(1, log_fp, "Cannot empty completion queue\n");
     }
@@ -2791,39 +2820,11 @@ empty_completion_queue( uint8_t server_id,
         }
 #endif
 #endif
-#ifdef BREAKDOWN_300NS
-    HRT_GET_TIMESTAMP(b_start);
-#endif
+
         ne = ibv_poll_cq(IBDEV->rc_cq[qp_id], IBDEV->rc_cqe, 
                         IBDEV->rc_wc_array);
-#ifdef BREAKDOWN_300NS
-    if(c_in == 1 || d_in == 1)
-    {
-        if(c_in == 1)
-        {
-            if(c_count < ARRAY_LEN)
-            {
-                HRT_GET_TIMESTAMP(b_end);
-                HRT_GET_ELAPSED_TICKS(b_start, b_end, &c_array[c_count]);
-                c_count++;
-            }
-        }
 
-        if(d_in == 1)
-        {
-            if(d_count < ARRAY_LEN)
-            {
-                HRT_GET_TIMESTAMP(b_end);
-                HRT_GET_ELAPSED_TICKS(b_start, b_end, &d_array[d_count]);
-                d_count++;
-            }
-        }
 
-        c_in = 0;
-        d_in = 0;
-    }
-#endif
-    
 #ifdef TEST_CALL_NUM
         if(in_test_call_num == 1 && consensus_end != 1)
             poll_cq_count[ne] ++;
