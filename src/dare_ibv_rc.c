@@ -1575,6 +1575,25 @@ update_remote_logs()
     in_loop = 1;
 #endif
     for (i = 0, init = 0; i < size; i++) {
+#ifdef BREAKDOWN_300NS
+        if(LR_UPDATE_LOG == (&SRV_DATA->config.servers[i])->next_lr_step)
+        {
+            c_in = 1;
+            d_in = 0;
+        }
+        else if(LR_UPDATE_END == (&SRV_DATA->config.servers[i])->next_lr_step)
+        {
+            c_in = 0;
+            d_in = 1;
+        }
+        else
+        {
+            c_in = 0;
+            d_in = 0;
+        }
+        HRT_GET_TIMESTAMP(b_start);
+#endif
+
         if ( (i == SRV_DATA->config.idx) ||
             !CID_IS_SERVER_ON(SRV_DATA->config.cid, i) )
             continue;
@@ -1741,17 +1760,31 @@ else {
 #endif
 
 #ifdef BREAKDOWN_300NS
-        if(LR_UPDATE_LOG == server->next_lr_step)
+    if(c_in == 1 || d_in == 1)
+    {
+        if(c_in == 1)
         {
-            c_in = 1;
-            d_in = 0;
+            if(c_count < ARRAY_LEN)
+            {
+                HRT_GET_TIMESTAMP(b_end);
+                HRT_GET_ELAPSED_TICKS(b_start, b_end, &c_array[c_count]);
+                c_count++;
+            }
         }
-        else
+
+        if(d_in == 1)
         {
-            c_in = 0;
-            d_in = 1;
+            if(d_count < ARRAY_LEN)
+            {
+                HRT_GET_TIMESTAMP(b_end);
+                HRT_GET_ELAPSED_TICKS(b_start, b_end, &d_array[d_count]);
+                d_count++;
+            }
         }
-        //HRT_GET_TIMESTAMP(b_start);
+
+        c_in = 0;
+        d_in = 0;
+    }
 #endif
 
 #ifdef DEBUG
@@ -2751,37 +2784,11 @@ post_send( uint8_t server_id,
         error_return(1, log_fp, "ibv_post_send failed because %s [%s]\n", 
             strerror(rc), rc == EINVAL ? "EINVAL" : rc == ENOMEM ? "ENOMEM" : rc == EFAULT ? "EFAULT" : "UNKNOWN");
     }
-#ifdef BREAKDOWN_300NS
-    HRT_GET_TIMESTAMP(b_start);
-#endif
+//#ifdef BREAKDOWN_300NS
+    //HRT_GET_TIMESTAMP(b_start);
+//#endif
     rc = empty_completion_queue(server_id, qp_id, wait_signaled_wr, posted_sends);
-#ifdef BREAKDOWN_300NS
-    if(c_in == 1 || d_in == 1)
-    {
-        if(c_in == 1)
-        {
-            if(c_count < ARRAY_LEN)
-            {
-                HRT_GET_TIMESTAMP(b_end);
-                HRT_GET_ELAPSED_TICKS(b_start, b_end, &c_array[c_count]);
-                c_count++;
-            }
-        }
 
-        if(d_in == 1)
-        {
-            if(d_count < ARRAY_LEN)
-            {
-                HRT_GET_TIMESTAMP(b_end);
-                HRT_GET_ELAPSED_TICKS(b_start, b_end, &d_array[d_count]);
-                d_count++;
-            }
-        }
-
-        c_in = 0;
-        d_in = 0;
-    }
-#endif
     if (0 != rc) {
         error_return(1, log_fp, "Cannot empty completion queue\n");
     }
