@@ -1751,6 +1751,7 @@ else {
             c_in = 0;
             d_in = 1;
         }
+        HRT_GET_TIMESTAMP(b_start);
 #endif
 
 #ifdef DEBUG
@@ -2722,10 +2723,9 @@ post_send( uint8_t server_id,
 #endif
 #endif
 
-#ifdef BREAKDOWN_300NS
-    HRT_GET_TIMESTAMP(b_start);
-#endif
-    rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
+//#ifdef BREAKDOWN_300NS
+//    HRT_GET_TIMESTAMP(b_start);
+//#endif
 #ifdef BREAKDOWN_300NS
     if(c_in == 1 || d_in == 1)
     {
@@ -2741,7 +2741,7 @@ post_send( uint8_t server_id,
 
         if(d_in == 1)
         {
-            if(c_count < ARRAY_LEN)
+            if(d_count < ARRAY_LEN)
             {
                 HRT_GET_TIMESTAMP(b_end);
                 HRT_GET_ELAPSED_TICKS(b_start, b_end, &d_array[d_count]);
@@ -2753,6 +2753,9 @@ post_send( uint8_t server_id,
         d_in = 0;
     }
 #endif
+
+    rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
+
 #ifdef BREAKDOWN_600NS
 #ifdef TEST_POST_SEND_INTERVAL
     if(in_flag == 1)
