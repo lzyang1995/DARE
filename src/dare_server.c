@@ -2029,7 +2029,7 @@ commit_new_entries()
                 {
                     uint64_t ticks;
                     HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
-                    if((!strcmp(stamp_array[ii].str, "POSTING C")) && (!strcmp(stamp_array[ii - 1].str, "POSTING C")))
+                    if((!strcmp(stamp_array[ii].str, "POSTING D")) && (!strcmp(stamp_array[ii - 1].str, "POSTING D")))
                         if(printnum < MAX_PRINT_NUM)
                         {
                             fprintf(post_send_inter, "%"PRIu64"\n", HRT_GET_NSEC(ticks));

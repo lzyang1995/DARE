@@ -2,6 +2,8 @@
 #include <inttypes.h>
 #include <stdint.h>
 
+#define NUM 50000
+
 int main(int argc, char const *argv[])
 {
 	FILE *fp = fopen(argv[1], "r");
@@ -10,7 +12,7 @@ int main(int argc, char const *argv[])
 	int max = 0;
 	double sum = 0;
 
-	for(i = 0;i < 50000;i++)
+	for(i = 0;i < NUM;i++)
 	{
 		fscanf(fp, "%d", &read);
 
@@ -25,7 +27,7 @@ int main(int argc, char const *argv[])
 
 	printf("max: %d\n", max);
 	printf("min: %d\n", min);
-	printf("avg: %lf\n", sum/20000);
+	printf("avg: %lf\n", sum/NUM);
 
 	return 0;
 }
