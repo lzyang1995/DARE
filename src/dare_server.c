@@ -15,9 +15,10 @@
 #define BREAKDOWN_600NS
 #define RDTSC
 #define TEST_CONSENSUS_LATENCY_NEW
+#define BREAKDOWN_300NS
 
 //#undef RDTSC
-//#undef TEST_POST_SEND_INTERVAL
+#undef TEST_POST_SEND_INTERVAL
 #undef TEST_CONSENSUS_LATENCY
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
@@ -185,6 +186,15 @@ uint64_t overall_latency[ARRAY_LEN];
 uint32_t count__ = 0;
 #endif
 
+#ifdef BREAKDOWN_300NS
+FILE *c_breakdown, d_breakdown;
+HRT_TIMESTAMP_T b_start, b_end;
+int c_in = 0, d_in = 0;
+#define ARRAY_LEN 20000
+uint64_t c_array[ARRAY_LEN], d_array[ARRAY_LEN];
+uint32_t c_count = 0, d_count = 0;
+#endif
+
 /* ================================================================== */
 /* local function - prototypes */
 
@@ -307,6 +317,11 @@ int dare_server_init( dare_server_input_t *input )
     strcat(filename, fileindex);
     new_consensus_latency = fopen(filename, "w");
 #endif
+
+#ifdef BREAKDOWN_300NS
+    c_breakdown = fopen("./c_breakdown", "w");
+    d_breakdown = fopen("./d_breakdown", "w");
+#endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
     
@@ -381,6 +396,15 @@ void dare_server_shutdown()
         fprintf(new_consensus_latency, "%9lf\n", HRT_GET_NSEC(overall_latency[ii]));
     fflush(new_consensus_latency);
     //printf("leader\n");
+#endif
+#ifdef BREAKDOWN_300NS
+    if(IS_LEADER)
+        printf("leader\n");
+    uint32_t ii;
+    for(ii = 0;ii < c_count;ii++)
+        fprintf(c_breakdown, "%9lf\n", HRT_GET_NSEC(c_array[ii]));
+    for(ii = 0;ii < d_count;ii++)
+        fprintf(d_breakdown, "%9lf\n", HRT_GET_NSEC(d_array[ii]));
 #endif
     exit(1);
 }

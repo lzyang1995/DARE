@@ -15,9 +15,10 @@
 #define TEST_CALL_NUM
 #define RDTSC
 #define TEST_CONSENSUS_LATENCY_NEW
+#define BREAKDOWN_300NS
 
 //#undef RDTSC
-//#undef TEST_POST_SEND_INTERVAL
+#undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
 #undef TEST_CONSENSUS_LATENCY_NEW
@@ -115,6 +116,15 @@ extern FILE *new_consensus_latency;
 extern int num_of_ack_d;
 extern HRT_TIMESTAMP_T new_start_t1, new_start_t2;
 extern int in_new_consensus_latency;
+#endif
+
+#ifdef BREAKDOWN_300NS
+extern FILE *c_breakdown, d_breakdown;
+extern HRT_TIMESTAMP_T b_start, b_end;
+extern int c_in, d_in;
+#define ARRAY_LEN 20000
+extern uint64_t c_array[ARRAY_LEN], d_array[ARRAY_LEN];
+extern uint32_t c_count, d_count;
 #endif
 /* ================================================================== */
 
@@ -1730,6 +1740,20 @@ else {
         in_new_consensus_latency = 1;
 #endif
 
+#ifdef BREAKDOWN_300NS
+        if(LR_UPDATE_LOG == server->next_lr_step)
+        {
+            c_in = 1;
+            d_in = 0;
+        }
+        else
+        {
+            c_in = 0;
+            d_in = 1;
+        }
+        HRT_GET_TIMESTAMP(b_start);
+#endif
+
 #ifdef DEBUG
         rc = 
 #endif        
@@ -2616,6 +2640,7 @@ post_send( uint8_t server_id,
     
     if (RC_QP_BLOCKED == *qp_state_ptr) {
         /* This QP is blocked; need to wait for the signaled WR */
+        printf("BLOCKED!!!!!!!!!!!!!!!!!!!!!!!\n");
         info_wtime(log_fp, "%s QP of p%"PRIu8" is BLOCKED\n", qp_id == LOG_QP ? "LOG": "CTRL", server_id);
         rc = empty_completion_queue(server_id, qp_id, 1, NULL);
         if (0 != rc) {
@@ -2625,6 +2650,7 @@ post_send( uint8_t server_id,
     }
     if (RC_QP_ERROR == *qp_state_ptr) {
         /* This QP is in ERR state - restart it */
+        printf("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n", );
         rc_qp_restart(ep, qp_id);
         *qp_state_ptr = RC_QP_ACTIVE;
         *send_count_ptr = 0;
@@ -2695,6 +2721,34 @@ post_send( uint8_t server_id,
         stamp_num ++;
     }
 #endif
+#endif
+
+#ifdef BREAKDOWN_300NS
+    if(c_in == 1 || d_in == 1)
+    {
+        if(c_in == 1)
+        {
+            if(c_count < ARRAY_LEN)
+            {
+                HRT_GET_TIMESTAMP(b_end);
+                HRT_GET_ELAPSED_TICKS(b_start, b_end, &c_array[c_count]);
+                c_count++;
+            }
+        }
+
+        if(d_in == 1)
+        {
+            if(c_count < ARRAY_LEN)
+            {
+                HRT_GET_TIMESTAMP(b_end);
+                HRT_GET_ELAPSED_TICKS(b_start, b_end, &d_array[d_count]);
+                d_count++;
+            }
+        }
+
+        c_in = 0;
+        d_in = 0;
+    }
 #endif
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
 #ifdef BREAKDOWN_600NS
