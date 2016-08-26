@@ -118,6 +118,8 @@ uint32_t l_count = 0;
 #ifdef TEST_POST_SEND_INTERVAL
 int lzyang_first = 0;
 FILE *post_send_inter;
+#define MAX_PRINT_NUM 50000
+uint32_t printnum = 0;
 #endif
 
 #ifdef BREAKDOWN_600NS
@@ -2028,7 +2030,12 @@ commit_new_entries()
                     uint64_t ticks;
                     HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
                     if((!strcmp(stamp_array[ii].str, "POSTING C")) && (!strcmp(stamp_array[ii - 1].str, "POSTING C")))
-                        fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
+                        if(printnum < MAX_PRINT_NUM)
+                        {
+                            fprintf(post_send_inter, "%"PRIu64"\n", HRT_GET_NSEC(ticks));
+                            printnum++;
+                        }
+                        //fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
                 }
             }
             stamp_num = 0;

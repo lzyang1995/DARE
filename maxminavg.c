@@ -10,7 +10,7 @@ int main(int argc, char const *argv[])
 	int max = 0;
 	double sum = 0;
 
-	for(i = 0;i < 20000;i++)
+	for(i = 0;i < 50000;i++)
 	{
 		fscanf(fp, "%d", &read);
 
