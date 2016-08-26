@@ -1751,7 +1751,6 @@ else {
             c_in = 0;
             d_in = 1;
         }
-        HRT_GET_TIMESTAMP(b_start);
 #endif
 
 #ifdef DEBUG
@@ -2724,6 +2723,10 @@ post_send( uint8_t server_id,
 #endif
 
 #ifdef BREAKDOWN_300NS
+    HRT_GET_TIMESTAMP(b_start);
+#endif
+    rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
+#ifdef BREAKDOWN_300NS
     if(c_in == 1 || d_in == 1)
     {
         if(c_in == 1)
@@ -2750,7 +2753,6 @@ post_send( uint8_t server_id,
         d_in = 0;
     }
 #endif
-    rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
 #ifdef BREAKDOWN_600NS
 #ifdef TEST_POST_SEND_INTERVAL
     if(in_flag == 1)
