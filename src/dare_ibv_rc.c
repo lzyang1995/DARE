@@ -1580,12 +1580,12 @@ update_remote_logs()
 #ifdef BREAKDOWN_300NS
         if(b300flag == 0)
         {
-            current_state = &SRV_DATA->config.servers[i]->next_lr_step;
+            current_state = (&SRV_DATA->config.servers[i])->next_lr_step;
         }
         else
         {
             last_state = current_state;
-            current_state = &SRV_DATA->config.servers[i]->next_lr_step;
+            current_state = (&SRV_DATA->config.servers[i])->next_lr_step;
         }
 #endif
 /*
