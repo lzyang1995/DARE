@@ -398,8 +398,6 @@ void dare_server_shutdown()
     //printf("leader\n");
 #endif
 #ifdef BREAKDOWN_300NS
-    if(IS_LEADER)
-        printf("leader\n");
     uint32_t ii;
     for(ii = 0;ii < c_count;ii++)
         fprintf(c_breakdown, "%9lf\n", HRT_GET_NSEC(c_array[ii]));
