@@ -125,6 +125,8 @@ extern int c_in, d_in;
 #define ARRAY_LEN 20000
 extern uint64_t c_array[ARRAY_LEN], d_array[ARRAY_LEN];
 extern uint32_t c_count, d_count;
+int b300flag = 0;
+uint8_t last_state, current_state;
 #endif
 /* ================================================================== */
 
@@ -1576,6 +1578,18 @@ update_remote_logs()
 #endif
     for (i = 0, init = 0; i < size; i++) {
 #ifdef BREAKDOWN_300NS
+        if(b300flag == 0)
+        {
+            current_state = &SRV_DATA->config.servers[i]->next_lr_step;
+        }
+        else
+        {
+            last_state = current_state;
+            current_state = &SRV_DATA->config.servers[i]->next_lr_step;
+        }
+#endif
+/*
+#ifdef BREAKDOWN_300NS
         if(LR_UPDATE_LOG == (&SRV_DATA->config.servers[i])->next_lr_step)
         {
             c_in = 1;
@@ -1591,9 +1605,9 @@ update_remote_logs()
             c_in = 0;
             d_in = 0;
         }
-        HRT_GET_TIMESTAMP(b_start);
+        //HRT_GET_TIMESTAMP(b_start);
 #endif
-
+*/
         if ( (i == SRV_DATA->config.idx) ||
             !CID_IS_SERVER_ON(SRV_DATA->config.cid, i) )
             continue;
@@ -1758,7 +1772,7 @@ else {
 #ifdef TEST_CONSENSUS_LATENCY_NEW
         in_new_consensus_latency = 1;
 #endif
-
+/*
 #ifdef BREAKDOWN_300NS
     if(c_in == 1 || d_in == 1)
     {
@@ -1784,6 +1798,37 @@ else {
 
         c_in = 0;
         d_in = 0;
+    }
+#endif
+*/
+#ifdef BREAKDOWN_300NS
+    if(b300flag == 0)
+    {
+        b300flag = 1;
+        HRT_GET_TIMESTAMP(b_start);
+    }
+    else
+    {
+        HRT_GET_TIMESTAMP(b_end);
+        uint64_t jianxi;
+        HRT_GET_ELAPSED_TICKS(b_start, b_end, &jianxi);
+        b_start = b_end;
+        if(last_state == LR_UPDATE_LOG)
+        {
+            if(c_count < ARRAY_LEN)
+            {
+                c_array[c_count] = jianxi;
+                c_count++;
+            }
+        }
+        else if(last_state == LR_UPDATE_END)
+        {
+            if(d_count < ARRAY_LEN)
+            {
+                d_array[d_count] = jianxi;
+                d_count++;
+            }
+        }
     }
 #endif
 
