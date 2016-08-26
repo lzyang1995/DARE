@@ -400,9 +400,9 @@ void dare_server_shutdown()
 #ifdef BREAKDOWN_300NS
     uint32_t ii;
     for(ii = 0;ii < c_count;ii++)
-        fprintf(c_breakdown, "%"PRIu64"\n", (uint64_t)HRT_GET_NSEC(c_array[ii]));
+        fprintf(c_breakdown, "%"PRIu64"\n", HRT_GET_NSEC(c_array[ii]));
     for(ii = 0;ii < d_count;ii++)
-        fprintf(d_breakdown, "%"PRIu64"\n", (uint64_t)HRT_GET_NSEC(d_array[ii]));
+        fprintf(d_breakdown, "%"PRIu64"\n", HRT_GET_NSEC(d_array[ii]));
 #endif
     exit(1);
 }

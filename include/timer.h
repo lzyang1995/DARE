@@ -62,7 +62,7 @@ extern unsigned long long g_timerfreq;
 #define HRT_GET_USEC(ticks) 1e6/*1e4*/*(double)ticks/(double)g_timerfreq
 
 /* added by lzyang */
-#define HRT_GET_NSEC(ticks) 1e9*(double)ticks/(double)g_timerfreq
+#define HRT_GET_NSEC(ticks) (uint64_t)((1e9*ticks)/g_timerfreq)
 
 #define usecs_wait(d) do {   \
   HRT_TIMESTAMP_T ts;   \
