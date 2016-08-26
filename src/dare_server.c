@@ -187,7 +187,7 @@ uint32_t count__ = 0;
 #endif
 
 #ifdef BREAKDOWN_300NS
-FILE *c_breakdown, d_breakdown;
+FILE *c_breakdown, *d_breakdown;
 HRT_TIMESTAMP_T b_start, b_end;
 int c_in = 0, d_in = 0;
 #define ARRAY_LEN 20000

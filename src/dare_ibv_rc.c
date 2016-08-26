@@ -119,7 +119,7 @@ extern int in_new_consensus_latency;
 #endif
 
 #ifdef BREAKDOWN_300NS
-extern FILE *c_breakdown, d_breakdown;
+extern FILE *c_breakdown, *d_breakdown;
 extern HRT_TIMESTAMP_T b_start, b_end;
 extern int c_in, d_in;
 #define ARRAY_LEN 20000
