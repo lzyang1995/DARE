@@ -1871,7 +1871,11 @@ text(log_fp, "   Best [idx=%"PRIu64"; term=%"PRIu64"]\n", best_request.index, be
 #ifdef FIXED_LEADER_2
     request = &(data.ctrl_data->vote_req[0]);
     if(request->sid == 0)
+    {
+        hb_event.repeat = 0.;
+        ev_timer_again(data.loop, &hb_event); 
         return;
+    }
     best_request.index = request->index;
     best_request.term = request->term;
     best_request.sid = request->sid;
