@@ -129,6 +129,15 @@ extern uint32_t c_count, d_count;
 int b300flag = 0;
 uint8_t last_state, current_state;
 #endif
+
+#ifdef MAJORITY_OF_C
+extern FILE *majority_of_c;
+extern HRT_TIMESTAMP_T t11, t22;
+extern int ack_c_num;
+#define ARRAY_LEN 20000
+extern uint64_t arrayname[ARRAY_LEN];
+extern int namecount;
+#endif
 /* ================================================================== */
 
 static int
@@ -3487,6 +3496,17 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                         }
 #endif
 #endif
+
+#ifdef MAJORITY_OF_C
+                        ack_c_num ++;
+                        if(ack_c_num == SRV_DATA->input->group_size / 2 && namecount < ARRAY_LEN)
+                        {
+                            HRT_GET_TIMESTAMP(t22);
+                            HRT_GET_ELAPSED_TICKS(t11, t22, &arrayname[namecount]);
+                            namecount ++;
+                        }
+#endif
+
 #ifdef lzyang
                         if(lzyang_flag == 1)
                         {

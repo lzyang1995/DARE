@@ -18,15 +18,18 @@
 #define BREAKDOWN_300NS
 #define FIXED_LEADER
 #define FIXED_LEADER_2
+#define MAJORITY_OF_C
+
 
 //#undef RDTSC
-//#undef TEST_POST_SEND_INTERVAL
+#undef TEST_POST_SEND_INTERVAL
 #undef TEST_CONSENSUS_LATENCY
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
 #undef TEST_CONSENSUS_LATENCY_NEW
 #undef BREAKDOWN_300NS
 #undef FIXED_LEADER
+#undef FIXED_LEADER_2
 
 #include <stdlib.h>
 #include <string.h>
@@ -146,6 +149,15 @@ extern lzyang_timestamp stamp_array[50];
 extern int stamp_num;
 extern int in_flag;
 FILE *temp;
+#endif
+
+#ifdef MAJORITY_OF_C
+FILE *majority_of_c;
+HRT_TIMESTAMP_T t11, t22;
+int ack_c_num = 0;
+#define ARRAY_LEN 20000
+uint64_t arrayname[ARRAY_LEN];
+int namecount = 0;
 #endif
 
 /* server data */
@@ -328,6 +340,9 @@ int dare_server_init( dare_server_input_t *input )
     c_breakdown = fopen("./c_breakdown", "w");
     d_breakdown = fopen("./d_breakdown", "w");
 #endif
+#ifdef MAJORITY_OF_C
+    majority_of_c = fopen("./majority_of_c", "w");
+#endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
     
@@ -409,6 +424,11 @@ void dare_server_shutdown()
         fprintf(c_breakdown, "%"PRIu64"\n", HRT_GET_NSEC(c_array[ii]));
     for(ii = 0;ii < d_count;ii++)
         fprintf(d_breakdown, "%"PRIu64"\n", HRT_GET_NSEC(d_array[ii]));
+#endif
+#ifdef MAJORITY_OF_C
+    uint32_t ii;
+    for(ii = 0;ii < namecount;ii++)
+        fprintf(majority_of_c, "%"PRIu64"\n", HRT_GET_NSEC(arrayname[ii]));
 #endif
     exit(1);
 }
@@ -1988,6 +2008,10 @@ commit_new_entries()
 
 #ifdef TEST_CONSENSUS_LATENCY_NEW
         HRT_GET_TIMESTAMP(new_start_t1);
+#endif
+#ifdef MAJORITY_OF_C
+        ack_c_num = 0;
+        HRT_GET_TIMESTAMP(t11);
 #endif
         rc = dare_ib_write_remote_logs(1);
         /* The function above is called only once for a request */

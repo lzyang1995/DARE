@@ -2,7 +2,7 @@
 #include <inttypes.h>
 #include <stdint.h>
 
-#define NUM 50000
+#define NUM 20000
 
 int main(int argc, char const *argv[])
 {
