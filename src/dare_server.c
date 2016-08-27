@@ -17,6 +17,7 @@
 #define TEST_CONSENSUS_LATENCY_NEW
 #define BREAKDOWN_300NS
 #define FIXED_LEADER
+#define FIXED_LEADER_2
 
 //#undef RDTSC
 //#undef TEST_POST_SEND_INTERVAL
@@ -25,6 +26,7 @@
 #undef TEST_CALL_NUM
 #undef TEST_CONSENSUS_LATENCY_NEW
 #undef BREAKDOWN_300NS
+#undef FIXED_LEADER
 
 #include <stdlib.h>
 #include <string.h>
@@ -1456,6 +1458,10 @@ hb_timeout()
 static void
 start_election()
 {
+#ifdef FIXED_LEADER_2
+    if(data.config.idx != 0)
+        return;
+#endif
     int rc, i;
     
     /* Get the latest SID */
@@ -1749,6 +1755,7 @@ poll_vote_requests()
           SID=[TERM|L|IDX] => [TERM|1|voted_idx] > [TERM|0|*] */
     uint64_t old_sid = data.ctrl_data->sid; SID_SET_L(old_sid);
     uint64_t best_sid = old_sid;
+#ifndef FIXED_LEADER_2
     for (i = 0; i < size; i++) {
         if (i == data.config.idx) continue;
         request = &(data.ctrl_data->vote_req[i]);
@@ -1769,6 +1776,7 @@ poll_vote_requests()
         /* No better SID */
         return;
     }
+#endif
     
     /* I thought I saw a better candidate ... */
     uint64_t highest_term = SID_GET_TERM(best_sid);
@@ -1815,6 +1823,7 @@ poll_vote_requests()
     info(log_fp, "   # Local [idx=%"PRIu64"; term=%"PRIu64"]\n", 
             best_request.index, best_request.term);        
     /* Choose the best candidate */
+#ifndef FIXED_LEADER_2
     for (i = 0; i < size; i++) {
         request = &(data.ctrl_data->vote_req[i]);
         if (best_request.sid > request->sid) {
@@ -1858,6 +1867,16 @@ text(log_fp, "   Best [idx=%"PRIu64"; term=%"PRIu64"]\n", best_request.index, be
         TIMER_STOP(log_fp); 
         return;
     }
+#endif
+#ifdef FIXED_LEADER_2
+    request = &(data.ctrl_data->vote_req[0]);
+    if(request->sid == 0)
+        return;
+    best_request.index = request->index;
+    best_request.term = request->term;
+    best_request.sid = request->sid;
+    best_request.cid = request->cid;
+#endif
     
     /* ... I did, I did saw a better candidate :) */
     info_wtime(log_fp, "[T%"PRIu64"] Vote for p%"PRIu8"\n", 
