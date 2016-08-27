@@ -16,6 +16,7 @@
 #define RDTSC
 #define TEST_CONSENSUS_LATENCY_NEW
 #define BREAKDOWN_300NS
+#define FIXED_LEADER
 
 //#undef RDTSC
 //#undef TEST_POST_SEND_INTERVAL
@@ -1236,14 +1237,30 @@ polling()
 #endif
     
     /* Poll for SM requests */
+#ifdef FIXED_LEADER
+    if (data.config.idx != 0) {
+        poll_sm_requests();
+    }
+#else
     if (!IS_LEADER) {
         poll_sm_requests();
     }
+#endif
     
     /* Check the number of failed attempts to access a server 
     through the CTRL QP */
     check_failure_count();
-    
+
+#ifdef FIXED_LEADER
+    if (data.config.idx == 0) {
+        /* Try to commit new log entries */
+        commit_new_entries();
+    }
+    else {
+        /* Poll for non SM log entries (CONFIG, HEAD...) */
+        poll_config_entries();
+    }
+#else
     if (IS_LEADER) {
         /* Try to commit new log entries */
         commit_new_entries();
@@ -1252,6 +1269,7 @@ polling()
         /* Poll for non SM log entries (CONFIG, HEAD...) */
         poll_config_entries();
     }
+#endif
         
     /* Apply new committed entries */
     apply_committed_entries();
@@ -1266,11 +1284,18 @@ polling()
     Note: if the SID of the candidate has a larger term, even a leader 
     or a candidate can vote */
     poll_vote_requests();
-    
+
+#ifdef FIXED_LEADER 
+    if (data.config.idx == 0) {
+        /* Check if log pruning is required */
+        force_log_pruning();
+    }
+#else  
     if (IS_LEADER) {
         /* Check if log pruning is required */
         force_log_pruning();
     }
+#endif
 }
 
 /**
@@ -1354,7 +1379,12 @@ check_failure_count()
             //debug(log_fp, "Suspecting server %"PRIu8" to have failed\n", i);
             /* In stable configuration, the leader can remove 
             unresponsive servers (on the CTRL QP) */ 
-            if ( (IS_LEADER) && (CID_STABLE == data.config.cid.state) ) {
+#ifdef FIXED_LEADER
+            if ( (data.config.idx == 0) && (CID_STABLE == data.config.cid.state) ) 
+#else
+            if ( (IS_LEADER) && (CID_STABLE == data.config.cid.state) ) 
+#endif
+            {
             //log_append_entry(data.log, SID_GET_TERM(data.ctrl_data->sid), 0, 0, 
               //  NOOP, NULL);
                 dare_ib_disconnect_server(i);
@@ -1372,7 +1402,12 @@ check_failure_count()
         info(log_fp, "Not enough connections... bye bye\n");
         dare_server_shutdown();
     }
-    if ( (IS_LEADER) && !equal_cid(cid, data.config.cid) ) {
+#ifdef FIXED_LEADER
+    if ( (data.config.idx == 0) && !equal_cid(cid, data.config.cid) ) 
+#else
+    if ( (IS_LEADER) && !equal_cid(cid, data.config.cid) ) 
+#endif
+    {
         /* Append CONFIG entry indicating removed servers */
         PRINT_CONF_TRANSIT(data.config.cid, cid);
         data.config.cid = cid;
@@ -2058,7 +2093,12 @@ apply_committed_entries()
     while (log_is_offset_larger(data.log, 
                 data.log->commit, data.log->apply))
     {
-        if (!IS_LEADER) {
+#ifdef FIXED_LEADER
+        if(data.config.idx != 0)
+#else
+        if (!IS_LEADER) 
+#endif
+        {
             //text_wtime(log_fp, "New committed entries ");
             //TEXT_PRINT_LOG(log_fp, data.log);
         }
@@ -2078,8 +2118,11 @@ apply_committed_entries()
             data.log->apply = 0;
             continue;
         }
-        
+#ifdef FIXED_LEADER
+        if(data.config.idx != 0)
+#else
         if (!IS_LEADER)
+#endif
             goto apply_entry;
 
         /* Just the leader... */
@@ -2179,7 +2222,12 @@ apply_committed_entries()
 apply_entry:        
         /* Apply entry */
         if (CSM == entry->type) {
-            if (!IS_LEADER) {
+#ifdef FIXED_LEADER
+            if(data.config.idx != 0)
+#else
+            if (!IS_LEADER) 
+#endif
+            {
                 if (entry->idx % 10000 == 0) {
                     info_wtime(log_fp, "APPLY LOG ENTRY: (%"PRIu64"; %"PRIu64")\n", 
                                 entry->idx, entry->term);
@@ -2207,7 +2255,12 @@ apply_next_entry:
     
     /* When new entries are applied, the leader verifies if there are 
     pending read requests */
-    if ((old_apply != data.log->apply) && IS_LEADER) {
+#ifdef FIXED_LEADER
+    if ((old_apply != data.log->apply) && data.config.idx == 0) 
+#else
+    if ((old_apply != data.log->apply) && IS_LEADER) 
+#endif
+    {
         ep_dp_reply_read_req(&data.endpoints, data.last_cmt_write_csm_idx);
     }
     
@@ -2239,7 +2292,11 @@ log_pruning()
     int rc;
     uint8_t i, size;
     
+#ifdef FIXED_LEADER
+    if (data.config.idx != 0) return 0;
+#else
     if (!IS_LEADER) return 0;
+#endif
     
     /* We have the requirement R1: for any server, the head offset must 
     never decrease (except for when wrapping-around the end of 
@@ -2814,7 +2871,11 @@ int server_update_sid( uint64_t new_sid, uint64_t old_sid )
 
 int is_leader() 
 {
+#ifdef FIXED_LEADER
+    return (data.config.idx == 0);
+#else
     return IS_LEADER;
+#endif
 }
 
 
