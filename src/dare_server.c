@@ -30,6 +30,7 @@
 #undef BREAKDOWN_300NS
 #undef FIXED_LEADER
 #undef FIXED_LEADER_2
+#undef MAJORITY_OF_C
 
 #include <stdlib.h>
 #include <string.h>

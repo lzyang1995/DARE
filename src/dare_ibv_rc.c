@@ -24,6 +24,7 @@
 #undef TEST_CALL_NUM
 #undef TEST_CONSENSUS_LATENCY_NEW
 #undef BREAKDOWN_300NS
+#undef MAJORITY_OF_C
 //#ifdef lzyang
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;
