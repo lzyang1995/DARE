@@ -415,7 +415,7 @@ void dare_server_shutdown()
 #ifdef TEST_CONSENSUS_LATENCY_NEW
     uint32_t ii;
     for(ii = 0;ii < count__;ii++)
-        fprintf(new_consensus_latency, "%9lf\n", HRT_GET_NSEC(overall_latency[ii]));
+        fprintf(new_consensus_latency, "%"PRIu64"\n", HRT_GET_NSEC(overall_latency[ii]));
     fflush(new_consensus_latency);
     //printf("leader\n");
 #endif
