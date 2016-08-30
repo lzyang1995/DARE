@@ -32,6 +32,7 @@
 #undef FIXED_LEADER
 #undef FIXED_LEADER_2
 #undef MAJORITY_OF_C
+#undef IBV_POST_SEND
 
 #include <stdlib.h>
 #include <string.h>

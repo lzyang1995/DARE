@@ -18,6 +18,7 @@
 #define BREAKDOWN_300NS
 #define MAJORITY_OF_C
 #define IBV_POST_SEND
+#define wangcheng
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
@@ -26,6 +27,7 @@
 #undef TEST_CONSENSUS_LATENCY_NEW
 #undef BREAKDOWN_300NS
 #undef MAJORITY_OF_C
+#undef IBV_POST_SEND
 //#ifdef lzyang
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;
@@ -2714,6 +2716,9 @@ int rc_print_qp_state( void *data )
 /**
  * Post send operation
  */
+#define BILLION 1000000000L
+
+
 int loggp_not_inline;
 static int 
 post_send( uint8_t server_id, 
@@ -2813,6 +2818,20 @@ post_send( uint8_t server_id,
     }   
     wr.wr.rdma.remote_addr = rm.raddr;
     wr.wr.rdma.rkey        = rm.rkey;
+#ifdef wangcheng
+    static FILE*ffp;
+    if (ffp == NULL)
+    {
+        ffp = fopen("wangcheng.txt", "w");
+    }
+
+    struct timespec start, end;
+    if (IBV_WR_RDMA_WRITE == opcode)
+    {
+        clock_gettime(CLOCK_MONOTONIC, &start);
+    }
+#endif
+
 #ifdef BREAKDOWN_600NS
 #ifdef TEST_POST_SEND_INTERVAL
     if(in_flag == 1)
@@ -2831,6 +2850,14 @@ post_send( uint8_t server_id,
 #endif
 
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
+
+#ifdef wangcheng
+    if (IBV_WR_RDMA_WRITE == opcode)
+    {
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        uint64_t diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+        fprintf(ffp, "%llu n\n",  (long long unsigned int) diff);
+    }
 
 #ifdef IBV_POST_SEND
     HRT_GET_TIMESTAMP(t22);
