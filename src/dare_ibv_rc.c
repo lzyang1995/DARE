@@ -2826,7 +2826,7 @@ post_send( uint8_t server_id,
     }
 
     struct timespec start, end;
-    if (IBV_WR_RDMA_WRITE == opcode)
+    if (IBV_WR_RDMA_WRITE == opcode && qp_id == LOG_QP)
     {
         clock_gettime(CLOCK_MONOTONIC, &start);
     }
@@ -2852,7 +2852,7 @@ post_send( uint8_t server_id,
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
 
 #ifdef wangcheng
-    if (IBV_WR_RDMA_WRITE == opcode)
+    if (IBV_WR_RDMA_WRITE == opcode && qp_id == LOG_QP)
     {
         clock_gettime(CLOCK_MONOTONIC, &end);
         uint64_t diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
