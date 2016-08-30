@@ -8,7 +8,7 @@ int main(int argc, char const *argv[])
 {
 	FILE *fp = fopen(argv[1], "r");
 	int i, read;
-	int min = 10000;
+	int min = 1000000;
 	int max = 0;
 	double sum = 0;
 
