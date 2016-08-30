@@ -2856,7 +2856,7 @@ post_send( uint8_t server_id,
     {
         clock_gettime(CLOCK_MONOTONIC, &end);
         uint64_t diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-        fprintf(ffp, "%llu n\n",  (long long unsigned int) diff);
+        fprintf(ffp, "%llu\n",  (long long unsigned int) diff);
     }
 #endif
 
