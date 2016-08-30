@@ -2858,6 +2858,7 @@ post_send( uint8_t server_id,
         uint64_t diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
         fprintf(ffp, "%llu n\n",  (long long unsigned int) diff);
     }
+#endif
 
 #ifdef IBV_POST_SEND
     HRT_GET_TIMESTAMP(t22);
