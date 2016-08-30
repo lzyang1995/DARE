@@ -17,6 +17,7 @@
 #define TEST_CONSENSUS_LATENCY_NEW
 #define BREAKDOWN_300NS
 #define MAJORITY_OF_C
+#define IBV_POST_SEND
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
@@ -132,13 +133,20 @@ int b300flag = 0;
 uint8_t last_state, current_state;
 #endif
 
-#ifdef MAJORITY_OF_C
-extern FILE *majority_of_c;
+/*****************************************************************/
 extern HRT_TIMESTAMP_T t11, t22;
-extern int ack_c_num;
-#define ARRAY_LEN 20000
+#define ARRAY_LEN 1000000
 extern uint64_t arrayname[ARRAY_LEN];
 extern int namecount;
+/*****************************************************************/
+
+#ifdef MAJORITY_OF_C
+extern FILE *majority_of_c;
+extern int ack_c_num;
+#endif
+
+#ifdef IBV_POST_SEND
+extern FILE *fp_send;
 #endif
 /* ================================================================== */
 
@@ -2818,7 +2826,18 @@ post_send( uint8_t server_id,
 #endif
 #endif
 
+#ifdef IBV_POST_SEND
+    HRT_GET_TIMESTAMP(t11);
+#endif
+
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
+
+#ifdef IBV_POST_SEND
+    HRT_GET_TIMESTAMP(t22);
+    uint64_t abc;
+    HRT_GET_ELAPSED_TICKS(t11, t22, &abc);
+    fprintf(fp_send, "%"PRIu64"\n", HRT_GET_NSEC(abc));
+#endif
 
 #ifdef BREAKDOWN_600NS
 #ifdef TEST_POST_SEND_INTERVAL

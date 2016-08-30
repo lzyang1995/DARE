@@ -19,6 +19,7 @@
 #define FIXED_LEADER
 #define FIXED_LEADER_2
 #define MAJORITY_OF_C
+#define IBV_POST_SEND
 
 
 //#undef RDTSC
@@ -152,13 +153,20 @@ extern int in_flag;
 FILE *temp;
 #endif
 
-#ifdef MAJORITY_OF_C
-FILE *majority_of_c;
+/******************************************************************/
 HRT_TIMESTAMP_T t11, t22;
-int ack_c_num = 0;
-#define ARRAY_LEN 20000
+#define ARRAY_LEN 1000000
 uint64_t arrayname[ARRAY_LEN];
 int namecount = 0;
+/******************************************************************/
+
+#ifdef MAJORITY_OF_C
+FILE *majority_of_c;
+int ack_c_num = 0;
+#endif
+
+#ifdef IBV_POST_SEND
+FILE *fp_send;
 #endif
 
 /* server data */
@@ -343,6 +351,10 @@ int dare_server_init( dare_server_input_t *input )
 #endif
 #ifdef MAJORITY_OF_C
     majority_of_c = fopen("./majority_of_c", "w");
+#endif
+
+#ifdef IBV_POST_SEND
+    fp_send = fopen("send", "w");
 #endif
     /* Set handler for SIGINT */
     signal(SIGINT, int_handler);
