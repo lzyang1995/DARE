@@ -15,7 +15,7 @@ while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
 	ssh -t -f ${ip} "cd ${bin_path};cd ..;git pull;make"
-	current='expr $current + 1'
+	current=`expr $current + 1`
 done
 
 #start the servers
@@ -25,12 +25,12 @@ while [ $total -lt $num ]
 do
 	ip="10.22.1.${current}"
 	ssh -t -f ${ip} "cd ${bin_path};./srv_test -m ${dgid} -s ${num} -i ${total}"
-	current='expr $current + 1'
+	current=`expr $current + 1`
 	if [ $current == 10 ]
 	then
 		current=1
 	fi
-	total='expr $total + 1'
+	total=`expr $total + 1`
 done
 
 sleep 20
@@ -48,5 +48,5 @@ while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
 	ssh -t -f ${ip} "killall -9 srv_test"
-	current='expr $current + 1'
+	current=`expr $current + 1`
 done
