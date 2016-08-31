@@ -25,13 +25,14 @@ current=1
 while [ $total -lt $num ]
 do
 	ip="10.22.1.${current}"
-	ssh -f ${ip} "cd ${bin_path};./srv_test -m ${dgid} -s ${num} -i ${total}"
+	ssh -f ${ip} "${bin_path}/srv_test -m ${dgid} -s ${num} -i ${total}"
 	current=`expr $current + 1`
 	if [ $current == 10 ]
 	then
 		current=1
 	fi
 	total=`expr $total + 1`
+	sleep 10
 done
 
 sleep 60
