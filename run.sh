@@ -14,7 +14,7 @@ client_output="output"
 while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
-	ssh -t -f ${ip} "cd ${bin_path};cd ..;git pull;make"
+	ssh -f ${ip} "cd ${bin_path};cd ..;git pull;make"
 	current=`expr $current + 1`
 done
 
@@ -24,7 +24,7 @@ current=1
 while [ $total -lt $num ]
 do
 	ip="10.22.1.${current}"
-	ssh -t -f ${ip} "cd ${bin_path};./srv_test -m ${dgid} -s ${num} -i ${total}"
+	ssh -f ${ip} "cd ${bin_path};./srv_test -m ${dgid} -s ${num} -i ${total}"
 	current=`expr $current + 1`
 	if [ $current == 10 ]
 	then
@@ -35,18 +35,18 @@ done
 
 sleep 20
 #start the client on the nineth machine. 
-ssh -t -f 10.22.1.9 "cd ${bin_path};./clt_test -m ${dgid} --loop -t ${kvsfile} -o ${client_output}"
+ssh -f 10.22.1.9 "cd ${bin_path};./clt_test -m ${dgid} --loop -t ${kvsfile} -o ${client_output}"
 
 sleep 2
 
 #kill the client process
-ssh -t -f 10.22.1.9 "killall -9 clt_test"
+ssh -f 10.22.1.9 "killall -9 clt_test"
 
 #kill all the servers
 current=1
 while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
-	ssh -t -f ${ip} "killall -9 srv_test"
+	ssh -f ${ip} "killall -9 srv_test"
 	current=`expr $current + 1`
 done
