@@ -83,6 +83,7 @@ int in_loop = 0;
 struct timespec ml_start, ml_end;
 #endif
 
+struct timespec start, end;
 #ifdef TEST_CALL_NUM
 extern FILE *fp_test_call_num;
 extern uint32_t post_send_count[2];
@@ -1568,6 +1569,9 @@ uint64_t wr_rm_log_cnt;
 int committed;
 char posted_sends_str[512];
 
+static FILE*wangchengfp;
+static int wangchengflag;
+
 uint64_t offsets[MAX_SERVER_COUNT];
 static int
 update_remote_logs()
@@ -1853,6 +1857,16 @@ else {
             }
         }
     }
+#endif
+
+#ifdef wangcheng                                                                                                                                                               
+        if (fp == NULL)                                                                                                                                                        
+                wangchengfp = fopen("fp.txt", "w");                                                                                                                            
+        if (LR_UPDATE_LOG == server->next_lr_step)                                                                                                                             
+        {                                                                                                                                                                      
+                clock_gettime(CLOCK_MONOTONIC, &start);                                                                                                                        
+                wangchengflag = 1;                                                                                                                                             
+        }                                                                                                                                                                      
 #endif
 
 #ifdef DEBUG
@@ -2819,19 +2833,6 @@ post_send( uint8_t server_id,
     }   
     wr.wr.rdma.remote_addr = rm.raddr;
     wr.wr.rdma.rkey        = rm.rkey;
-#ifdef wangcheng
-    static FILE*ffp;
-    if (ffp == NULL)
-    {
-        ffp = fopen("wangcheng.txt", "w");
-    }
-
-    struct timespec start, end;
-    if (IBV_WR_RDMA_WRITE == opcode && qp_id == LOG_QP)
-    {
-        clock_gettime(CLOCK_MONOTONIC, &start);
-    }
-#endif
 
 #ifdef BREAKDOWN_600NS
 #ifdef TEST_POST_SEND_INTERVAL
@@ -2853,11 +2854,12 @@ post_send( uint8_t server_id,
     rc = ibv_post_send(ep->rc_ep.rc_qp[qp_id].qp, &wr, &bad_wr);
 
 #ifdef wangcheng
-    if (IBV_WR_RDMA_WRITE == opcode && qp_id == LOG_QP)
+    if (IBV_WR_RDMA_WRITE == opcode && qp_id == LOG_QP && wangchengflag == 1)
     {
         clock_gettime(CLOCK_MONOTONIC, &end);
         uint64_t diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
-        fprintf(ffp, "%llu\n",  (long long unsigned int) diff);
+        fprintf(wangchengfp, "%llu\n",  (long long unsigned int) diff);
+        wangchengflag = 0;
     }
 #endif
 
