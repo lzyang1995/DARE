@@ -25,7 +25,7 @@ current=1
 while [ $total -lt $num ]
 do
 	ip="10.22.1.${current}"
-	ssh -f ${ip} "${bin_path}/srv_test -m ${dgid} -s ${num} -i ${total}"
+	ssh -f ${ip} "cd ${bin_path};./srv_test -m ${dgid} -s ${num} -i ${total}"
 	current=`expr $current + 1`
 	if [ $current == 10 ]
 	then
@@ -42,14 +42,14 @@ ssh -f 10.22.1.9 "cd ${bin_path};./clt_test -m ${dgid} --loop -t ${kvsfile} -o $
 sleep 5
 
 #kill the client process
-ssh 10.22.1.9 "killall -9 clt_test"
+ssh 10.22.1.9 "killall -2 clt_test"
 
 #kill all the servers
 current=1
 while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
-	ssh ${ip} "killall -9 srv_test"
+	ssh ${ip} "killall -2 srv_test"
 	current=`expr $current + 1`
 done
 
