@@ -1,6 +1,7 @@
 #!/bin/bash
 #parameters:
 #$1: the number of servers
+set -x
 
 num=$1
 current=1
@@ -14,7 +15,7 @@ client_output="output"
 while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
-	ssh -f ${ip} "cd ${bin_path};cd ..;git pull;make"
+	ssh ${ip} "cd ${bin_path};cd ..;git pull;make"
 	current=`expr $current + 1`
 done
 
@@ -37,16 +38,18 @@ sleep 20
 #start the client on the nineth machine. 
 ssh -f 10.22.1.9 "cd ${bin_path};./clt_test -m ${dgid} --loop -t ${kvsfile} -o ${client_output}"
 
-sleep 2
+sleep 5
 
 #kill the client process
-ssh -f 10.22.1.9 "killall -9 clt_test"
+ssh 10.22.1.9 "killall -9 clt_test"
 
 #kill all the servers
 current=1
 while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
-	ssh -f ${ip} "killall -9 srv_test"
+	ssh ${ip} "killall -9 srv_test"
 	current=`expr $current + 1`
 done
+
+exit

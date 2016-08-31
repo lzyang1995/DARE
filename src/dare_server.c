@@ -321,7 +321,11 @@ int dare_server_init( dare_server_input_t *input )
     fp_consensus_latency = fopen("./consensus_latency", "w");
 #endif
 #ifdef TEST_POST_SEND_INTERVAL
-    post_send_inter = fopen("./opst_send_inter", "w");
+    char filename[256] = "./opst_send_inter";
+    char fileindex[10];
+    sprintf(fileindex, "_%u", input->server_idx);
+    strcat(filename, fileindex);
+    post_send_inter = fopen(filename, "w");
     temp = fopen("./temp", "w");
 #endif
 
@@ -351,7 +355,11 @@ int dare_server_init( dare_server_input_t *input )
     d_breakdown = fopen("./d_breakdown", "w");
 #endif
 #ifdef MAJORITY_OF_C
-    majority_of_c = fopen("./majority_of_c", "w");
+    char filename[256] = "./majority_of_c";
+    char fileindex[10];
+    sprintf(fileindex, "_%u", input->server_idx);
+    strcat(filename, fileindex);
+    majority_of_c = fopen(filename, "w");
 #endif
 
 #ifdef IBV_POST_SEND
