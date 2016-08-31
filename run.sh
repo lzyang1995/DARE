@@ -11,7 +11,17 @@ kvsfile="throughput"
 bin_path="~/DARE/bin"
 client_output="output"
 
+#compile
+while [ $current -lt 10 ]
+do
+	ip = "10.22.1.${current}"
+	ssh -t -f ${ip} "cd ${bin_path};cd ..;git pull;make"
+	current='expr $current + 1'
+done
+
 #start the servers
+total=0
+current=1
 while [ $total -lt num ]
 do
 	ip = "10.22.1.${current}"
