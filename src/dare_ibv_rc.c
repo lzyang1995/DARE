@@ -28,7 +28,7 @@
 #undef BREAKDOWN_300NS
 #undef MAJORITY_OF_C
 #undef IBV_POST_SEND
-//#undef wangcheng
+#undef wangcheng
 //#ifdef lzyang
 #include <time.h>
 struct timespec lzyang_start, lzyang_now;
