@@ -67,3 +67,5 @@ Distributed Computing (HPDC’15)
 --loop: generate only two requests, one is put and the other is get. Their size is the same as what "-s" designates.
 --trace: when "-s" is 1024, it will generate request of size 8, 16, 32, 64, 128 ... until 1024
 default --loop, not --trace
+
+for example: ./kvs_trace --loop --put -s 128 -o throughput
