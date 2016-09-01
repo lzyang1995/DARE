@@ -1860,8 +1860,8 @@ else {
 #endif
 
 #ifdef wangcheng                                                                                                                                                               
-        if (fp == NULL)                                                                                                                                                        
-                wangchengfp = fopen("fp.txt", "w");                                                                                                                            
+        if (wangchengfp == NULL)                                                                                                                                                        
+                wangchengfp = fopen("wangchengfp.txt", "w");                                                                                                                            
         if (LR_UPDATE_LOG == server->next_lr_step)                                                                                                                             
         {                                                                                                                                                                      
                 clock_gettime(CLOCK_MONOTONIC, &start);                                                                                                                        
