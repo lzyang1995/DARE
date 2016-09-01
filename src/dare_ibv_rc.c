@@ -2773,7 +2773,7 @@ post_send( uint8_t server_id,
     }
     if (RC_QP_ERROR == *qp_state_ptr) {
         /* This QP is in ERR state - restart it */
-        printf("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
+        //printf("ERROR!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n");
         rc_qp_restart(ep, qp_id);
         *qp_state_ptr = RC_QP_ACTIVE;
         *send_count_ptr = 0;
