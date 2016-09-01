@@ -63,3 +63,7 @@ Folder overview
 In Proceedings of the 24th ACM International Symposium on High-Performance Parallel and 
 Distributed Computing (HPDC’15)
 
+./kvs_trace:
+--loop: generate only two requests, one is put and the other is get. Their size is the same as what "-s" designates.
+--trace: when "-s" is 1024, it will generate request of size 8, 16, 32, 64, 128 ... until 1024
+default --loop, not --trace
