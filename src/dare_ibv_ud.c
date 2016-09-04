@@ -1569,7 +1569,7 @@ handle_rc_syn(struct ibv_wc *wc, rc_syn_t *msg)
     if (0 == ep->rc_connected) {
 #ifdef lzyang
         uint8_t *p = (uint8_t *)&(msg->mygid);
-        printf("Remote GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
+        // printf("Remote GID =%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x\n", p[0], p[1], p[2], p[3], p[4], p[5], p[6], p[7], p[8], p[9], p[10], p[11], p[12], p[13], p[14], p[15]);
         (ep->ud_ep).mygid = msg->mygid;
 #endif
         /* Create UD endpoint from WC */
