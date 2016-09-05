@@ -679,6 +679,7 @@ ud_send_message( ud_ep_t *ud_ep, uint32_t len )
     sg.addr   = (uint64_t)IBDEV->ud_send_buf;
     sg.length = len;
     sg.lkey   = IBDEV->ud_send_mr->lkey;
+    fprintf(stderr, "IBDEV->ud_send_buf points to %p, sg.addr is %x\n", IBDEV->ud_send_buf, sg.addr);
      
     memset(&wr, 0, sizeof(wr));
     wr.wr_id      = 0;
