@@ -748,7 +748,7 @@ mcast_send_message( uint32_t len )
     struct ibv_send_wr wr;
     struct ibv_send_wr *bad_wr = NULL;
     
-    text(log_fp, "## Sending mcast message (len=%"PRIu32")\n", len);
+    //text(log_fp, "## Sending mcast message (len=%"PRIu32")\n", len);
     if (len > mtu_value(IBDEV->mtu)) {
         debug(log_fp, "Length = %"PRIu32"; cannot send more than %"PRIu32" bytes\n", 
               len, mtu_value(IBDEV->mtu));
@@ -1542,7 +1542,7 @@ int ud_update_rc_info()
     if (i == size) {
         return 0;
     }
-    text(log_fp, "PERIODIC RC UPDATE\n");    
+    //text(log_fp, "PERIODIC RC UPDATE\n");    
     return ud_exchange_rc_info();
 }
 
