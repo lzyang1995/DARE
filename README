@@ -71,3 +71,12 @@ default --loop, not --trace
 for example: ./kvs_trace --loop --put -s 128 -o throughput
 
 Remember to #define or #undef in both dare_server.c and dare_ibv_rc.c
+
+--------------------------------------------------------------------------------------------------------------------------
+1. Event Order
+Do the following things in two files: dare_server.c, dare_ibv_rc.c
+只保留TEST_POST_SEND_INTERVAL和RDTSC的define，将其他的都undef掉
+
+2. ACK of D
+Do the following things in two files: dare_server.c, dare_ibv_rc.c
+只保留TEST_CONSENSUS_LATENCY_NEW和RDTSC的define，将其他的都undef掉
