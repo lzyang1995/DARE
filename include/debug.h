@@ -12,7 +12,7 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#define TEST_CONSENSUS_LATENCY
+#define TEST_CONSENSUS_LATENCY_CHENG
 
 #include <stdio.h>
 #include <errno.h>
@@ -24,7 +24,7 @@
 //extern struct timeval prev_tv;
 //extern uint64_t jump_cnt;
 
-#ifndef TEST_CONSENSUS_LATENCY
+#ifndef TEST_CONSENSUS_LATENCY_CHENG
 
 #define info(stream, fmt, ...) do {\
     fprintf(stream, fmt, ##__VA_ARGS__); \
@@ -74,7 +74,7 @@
 #define text_wtime(stream, fmt, ...)
 #endif
 
-#ifndef TEST_CONSENSUS_LATENCY
+#ifndef TEST_CONSENSUS_LATENCY_CHENG
 //#ifdef DEBUG
 #define error(stream, fmt, ...) do { \
     fprintf(stream, "[ERROR] %s/%d/%s() " fmt, __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
