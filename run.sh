@@ -5,7 +5,6 @@ set -x
 
 num=$1
 current=2
-total=0
 dgid="ff0e::ffff:e101:101" 
 kvsfile="throughput"
 bin_path="~/DARE/bin"
@@ -18,6 +17,8 @@ do
 	ssh ${ip} "cd ${bin_path};cd ..;git pull;make"
 	current=`expr $current + 1`
 done
+
+ssh -f 10.22.1.1 "cd ${bin_path}; ulimit -c unlimited; ./srv_test -m ${dgid} -s ${num} -i 0"
 
 #start the servers
 total=1
