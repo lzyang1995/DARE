@@ -4,13 +4,12 @@
 set -x
 
 num=$1
-current=1
+current=2
 total=0
 dgid="ff0e::ffff:e101:101" 
 kvsfile="throughput"
 bin_path="~/DARE/bin"
 client_output="output"
-datafile="opst_send_inter"
 
 #compile
 while [ $current -lt 10 ]
@@ -21,8 +20,8 @@ do
 done
 
 #start the servers
-total=0
-current=1
+total=1
+current=2
 while [ $total -lt $num ]
 do
 	ip="10.22.1.${current}"
@@ -30,7 +29,7 @@ do
 	current=`expr $current + 1`
 	if [ $current == 10 ]
 	then
-		current=1
+		current=2
 	fi
 	total=`expr $total + 1`
 	sleep 2
@@ -54,27 +53,27 @@ do
 	current=`expr $current + 1`
 done
 
-total=0
-current=1
-while [ $total -lt $num ]
-do
-	ip="10.22.1.${current}"
-	consensus_num=$total
-	line=`ssh -f ${ip} "cat ${bin_path}/${datafile}_${consensus_num} | wc -l"`
-	if [ $line -gt 10000 ]; then
-		echo "${datafile}_${consensus_num}"
-		ssh ${ip} "awk '{ sum += \$1; n++ } END { if (n > 0) print sum / n; }' ${bin_path}/${datafile}_${consensus_num}"
-		#echo $consensus_latency
-		break
-	fi
+# total=0
+# current=1
+# while [ $total -lt $num ]
+# do
+# 	ip="10.22.1.${current}"
+# 	consensus_num=$total
+# 	line=`ssh -f ${ip} "cat ${bin_path}/new_consensus_latency_${consensus_num} | wc -l"`
+# 	if [ $line -gt 10000 ]; then
+# 		echo "new_consensus_latency_${consensus_num}"
+# 		ssh ${ip} "awk '{ sum += \$1; n++ } END { if (n > 0) print sum / n; }' ${bin_path}/new_consensus_latency_${consensus_num}"
+# 		#echo $consensus_latency
+# 		break
+# 	fi
 
-	current=`expr $current + 1`
-	if [ $current == 10 ]
-	then
-		current=1
-	fi
-	total=`expr $total + 1`
-	sleep 2
-done
+# 	current=`expr $current + 1`
+# 	if [ $current == 10 ]
+# 	then
+# 		current=1
+# 	fi
+# 	total=`expr $total + 1`
+# 	sleep 2
+# done
 
 exit
