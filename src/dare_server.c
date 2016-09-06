@@ -10,7 +10,6 @@
  */
 //#define lzyang
 #define TEST_POST_SEND_INTERVAL
-#define TEST_CONSENSUS_LATENCY
 #define TEST_CALL_NUM
 #define BREAKDOWN_600NS
 #define RDTSC
@@ -24,7 +23,6 @@
 
 //#undef RDTSC
 //#undef TEST_POST_SEND_INTERVAL
-#undef TEST_CONSENSUS_LATENCY
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
 //#undef TEST_CONSENSUS_LATENCY_NEW
