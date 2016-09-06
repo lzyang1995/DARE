@@ -25,7 +25,7 @@
 //#undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
-//#undef TEST_CONSENSUS_LATENCY_NEW
+#undef TEST_CONSENSUS_LATENCY_NEW
 #undef BREAKDOWN_300NS
 #undef FIXED_LEADER
 #undef FIXED_LEADER_2
@@ -2126,18 +2126,19 @@ commit_new_entries()
             for(ii = 0;ii < stamp_num;ii++)
             {
                 if(ii == 0)
-                    ;//fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
+                    fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t0\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset);
                 else
                 {
                     uint64_t ticks;
                     HRT_GET_ELAPSED_TICKS(stamp_array[ii - 1].stamp, stamp_array[ii].stamp, &ticks);
-                    if((!strcmp(stamp_array[ii].str, "POSTING D")) && (!strcmp(stamp_array[ii - 1].str, "POSTING D")))
-                        if(printnum < MAX_PRINT_NUM)
-                        {
-                            fprintf(post_send_inter, "%"PRIu64"\n", HRT_GET_NSEC(ticks));
-                            printnum++;
-                        }
-                        //fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
+                    //if((!strcmp(stamp_array[ii].str, "POSTING D")) && (!strcmp(stamp_array[ii - 1].str, "POSTING D")))
+                        //if(printnum < MAX_PRINT_NUM)
+                        //{
+
+                            //fprintf(post_send_inter, "%"PRIu64"\n", HRT_GET_NSEC(ticks));
+                            //printnum++;
+                        //}
+                    fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
                 }
             }
             stamp_num = 0;
