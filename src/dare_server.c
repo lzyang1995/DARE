@@ -1498,10 +1498,6 @@ hb_timeout()
 static void
 start_election()
 {
-#ifdef FIXED_LEADER_2
-    if(data.config.idx != 0)
-        return;
-#endif
     sleep(10);
     int rc, i;
     
