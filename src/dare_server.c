@@ -1502,6 +1502,7 @@ start_election()
     if(data.config.idx != 0)
         return;
 #endif
+    sleep(10);
     int rc, i;
     
     /* Get the latest SID */
