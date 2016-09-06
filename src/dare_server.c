@@ -2138,7 +2138,7 @@ commit_new_entries()
                             //fprintf(post_send_inter, "%"PRIu64"\n", HRT_GET_NSEC(ticks));
                             //printnum++;
                         //}
-                    fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%9.3lf\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
+                    fprintf(post_send_inter, "p%d\t%s\t%"PRIu64"\t%"PRIu64"\n", stamp_array[ii].i, stamp_array[ii].str, stamp_array[ii].end_offset, HRT_GET_NSEC(ticks));
                 }
             }
             stamp_num = 0;
