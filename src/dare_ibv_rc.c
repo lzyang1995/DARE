@@ -21,7 +21,7 @@
 #define wangcheng
 
 //#undef RDTSC
-#undef TEST_POST_SEND_INTERVAL
+//#undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
 //#undef TEST_CONSENSUS_LATENCY_NEW
