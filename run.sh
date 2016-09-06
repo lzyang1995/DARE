@@ -54,27 +54,6 @@ do
 	current=`expr $current + 1`
 done
 
-# total=0
-# current=1
-# while [ $total -lt $num ]
-# do
-# 	ip="10.22.1.${current}"
-# 	consensus_num=$total
-# 	line=`ssh -f ${ip} "cat ${bin_path}/new_consensus_latency_${consensus_num} | wc -l"`
-# 	if [ $line -gt 10000 ]; then
-# 		echo "new_consensus_latency_${consensus_num}"
-# 		ssh ${ip} "awk '{ sum += \$1; n++ } END { if (n > 0) print sum / n; }' ${bin_path}/new_consensus_latency_${consensus_num}"
-# 		#echo $consensus_latency
-# 		break
-# 	fi
-
-# 	current=`expr $current + 1`
-# 	if [ $current == 10 ]
-# 	then
-# 		current=1
-# 	fi
-# 	total=`expr $total + 1`
-# 	sleep 2
-# done
+ssh 10.22.1.1 "awk '{ sum += \$1; n++ } END { if (n > 0) print sum / n; }' ${bin_path}/new_consensus_latency_0"
 
 exit
