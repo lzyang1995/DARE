@@ -3623,6 +3623,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                 {
                     num_of_ack_d ++;
                     if(num_of_ack_d == SRV_DATA->input->group_size / 2)
+                    //if(num_of_ack_d == 1) // first d ack has been received
                     {
                         HRT_GET_TIMESTAMP(new_start_t2);
                     }
