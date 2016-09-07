@@ -117,7 +117,7 @@ FILE *lzyang_fp_ack;
 struct timespec con_start, con_end;
 static HRT_TIMESTAMP_T rdtsc_start, rdtsc_end;
 #ifdef TEST_CONSENSUS_LATENCY
-#define ARRAY_LEN 20000
+#define ARRAY_LEN 100000
 FILE *fp_consensus_latency;
 uint64_t latency[ARRAY_LEN];
 uint32_t l_count = 0;
