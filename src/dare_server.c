@@ -210,7 +210,7 @@ int in_new_consensus_latency;
 #define ARRAY_LEN 20000
 uint64_t overall_latency[ARRAY_LEN];
 uint64_t fist_ack_latency[ARRAY_LEN];
-uint32_t count__ = -500;
+int count__ = -500;
 #endif
 
 #ifdef BREAKDOWN_300NS
@@ -433,7 +433,7 @@ void dare_server_shutdown()
     free_server_data();
     fclose(log_fp);
 #ifdef TEST_CONSENSUS_LATENCY_NEW
-    uint32_t ii;
+    int ii;
     for(ii = 0;ii < count__;ii++)
         fprintf(new_consensus_latency, "%"PRIu64";%"PRIu64"\n", HRT_GET_NSEC(fist_ack_latency[ii]), HRT_GET_NSEC(overall_latency[ii]));
     fflush(new_consensus_latency);
