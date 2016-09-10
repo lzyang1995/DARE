@@ -1498,7 +1498,9 @@ hb_timeout()
 static void
 start_election()
 {
-    sleep(10); // leader does not sleep
+    if (data.config.idx != 0)
+        sleep(10); // leader does not sleep
+    
     int rc, i;
     
     /* Get the latest SID */
