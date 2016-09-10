@@ -205,7 +205,7 @@ int consensus_end = 0;
 #ifdef TEST_CONSENSUS_LATENCY_NEW
 FILE *new_consensus_latency;
 int num_of_ack_d = 0;
-HRT_TIMESTAMP_T new_start_t1, new_start_t2;
+HRT_TIMESTAMP_T new_start_t1, new_start_t2, new_start_t3;
 int in_new_consensus_latency = 0;
 #define ARRAY_LEN 20000
 uint64_t overall_latency[ARRAY_LEN];
