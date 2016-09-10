@@ -1500,7 +1500,7 @@ static void
 start_election()
 {
     if (data.config.idx != 0)
-        sleep(10); // leader does not sleep
+        sleep(5); // leader does not sleep
     
     int rc, i;
     
