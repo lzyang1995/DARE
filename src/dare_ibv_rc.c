@@ -122,7 +122,7 @@ static HRT_TIMESTAMP_T begin_t, end_t;
 #ifdef TEST_CONSENSUS_LATENCY_NEW
 extern FILE *new_consensus_latency;
 extern int num_of_ack_d;
-extern HRT_TIMESTAMP_T new_start_t1, new_start_t2;
+extern HRT_TIMESTAMP_T new_start_t1, new_start_t2, new_start_t3;
 extern int in_new_consensus_latency;
 #endif
 
@@ -3622,6 +3622,10 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                 if(in_new_consensus_latency == 1)
                 {
                     num_of_ack_d ++;
+                    if (num_of_ack_d == 1)
+                    {
+                        HRT_GET_TIMESTAMP(new_start_t3);
+                    }
                     if(num_of_ack_d == SRV_DATA->input->group_size / 2)
                     //if(num_of_ack_d == 1) // first d ack has been received
                     {
