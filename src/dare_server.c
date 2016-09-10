@@ -442,7 +442,7 @@ void dare_server_shutdown()
         fprintf(new_consensus_latency, "%"PRIu64" %"PRIu64" %"PRIu64"\n", HRT_GET_NSEC(fist_ackc_latency[ii]), HRT_GET_NSEC(fist_ackd_latency[ii]), HRT_GET_NSEC(overall_latency[ii]));
     fflush(new_consensus_latency);
     //printf("leader\n");
-#elif
+#else
     for(ii = 0;ii < count__;ii++)
         fprintf(new_consensus_latency, "%"PRIu64"\n",HRT_GET_NSEC(overall_latency[ii]));
     fflush(new_consensus_latency);
