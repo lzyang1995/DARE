@@ -15,6 +15,7 @@
 #define TEST_CALL_NUM
 #define RDTSC
 #define TEST_CONSENSUS_LATENCY_NEW
+#define TEST_OTHER_LATENCY_NEW
 #define BREAKDOWN_300NS
 #define MAJORITY_OF_C
 #define IBV_POST_SEND
@@ -25,6 +26,7 @@
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
 //#undef TEST_CONSENSUS_LATENCY_NEW
+//#undef TEST_OTHER_LATENCY_NEW
 #undef BREAKDOWN_300NS
 #undef MAJORITY_OF_C
 #undef IBV_POST_SEND
@@ -3550,11 +3552,13 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
 #endif
 
 #ifdef TEST_CONSENSUS_LATENCY_NEW
+#ifdef TEST_OTHER_LATENCY_NEW
                         if(in_new_consensus_latency == 1)
                         {
                             if (idx == 1)
                                 HRT_GET_TIMESTAMP(new_start_t4);
                         }
+#endif
 #endif
                         
 #ifdef MAJORITY_OF_C
@@ -3630,12 +3634,13 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                 if(in_new_consensus_latency == 1)
                 {
                     num_of_ack_d ++;
+#ifdef TEST_OTHER_LATENCY_NEW
                     if (num_of_ack_d == 1)
                     {
                         HRT_GET_TIMESTAMP(new_start_t3);
                     }
+#endif
                     if(num_of_ack_d == SRV_DATA->input->group_size / 2)
-                    //if(num_of_ack_d == 1) // first d ack has been received
                     {
                         HRT_GET_TIMESTAMP(new_start_t2);
                     }
