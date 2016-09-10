@@ -14,6 +14,7 @@
 #define BREAKDOWN_600NS
 #define RDTSC
 #define TEST_CONSENSUS_LATENCY_NEW
+#define TEST_OTHER_LATENCY_NEW
 #define BREAKDOWN_300NS
 #define FIXED_LEADER
 #define FIXED_LEADER_2
@@ -26,6 +27,7 @@
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
 //#undef TEST_CONSENSUS_LATENCY_NEW
+//#undef TEST_OTHER_LATENCY_NEW
 #undef BREAKDOWN_300NS
 #undef FIXED_LEADER
 #undef FIXED_LEADER_2
@@ -435,10 +437,16 @@ void dare_server_shutdown()
     fclose(log_fp);
 #ifdef TEST_CONSENSUS_LATENCY_NEW
     int ii;
+#ifdef TEST_OTHER_LATENCY_NEW
     for(ii = 0;ii < count__;ii++)
         fprintf(new_consensus_latency, "%"PRIu64" %"PRIu64" %"PRIu64"\n", HRT_GET_NSEC(fist_ackc_latency[ii]), HRT_GET_NSEC(fist_ackd_latency[ii]), HRT_GET_NSEC(overall_latency[ii]));
     fflush(new_consensus_latency);
     //printf("leader\n");
+#elif
+    for(ii = 0;ii < count__;ii++)
+        fprintf(new_consensus_latency, "%"PRIu64"\n",HRT_GET_NSEC(overall_latency[ii]));
+    fflush(new_consensus_latency);
+#endif
 #endif
 #ifdef BREAKDOWN_300NS
     uint32_t ii;
@@ -2043,8 +2051,12 @@ commit_new_entries()
         {
             if(count__ < ARRAY_LEN && count__ >= 0)
             {
+                
+
+#ifdef TEST_OTHER_LATENCY_NEW
                 HRT_GET_ELAPSED_TICKS(new_start_t1, new_start_t4, &fist_ackc_latency[count__]);
                 HRT_GET_ELAPSED_TICKS(new_start_t1, new_start_t3, &fist_ackd_latency[count__]);
+#endif
                 HRT_GET_ELAPSED_TICKS(new_start_t1, new_start_t2, &overall_latency[count__]);
                 count__ ++;
             }
