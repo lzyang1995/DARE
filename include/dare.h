@@ -24,7 +24,7 @@
 #define NOW 0.000000001
 
 #define MAX_CLIENT_COUNT 66
-#define MAX_SERVER_COUNT 65
+#define MAX_SERVER_COUNT 129
 
 #define PAGE_SIZE 4096
 
