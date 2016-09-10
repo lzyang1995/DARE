@@ -3548,8 +3548,14 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                         }
 #endif
 #endif
-                        if (idx == 1)
-                            HRT_GET_TIMESTAMP(new_start_t4);
+
+#ifdef TEST_CONSENSUS_LATENCY_NEW
+                        if(in_new_consensus_latency == 1)
+                        {
+                            if (idx == 1)
+                                HRT_GET_TIMESTAMP(new_start_t4);
+                        }
+#endif
                         
 #ifdef MAJORITY_OF_C
                         ack_c_num ++;
