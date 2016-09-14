@@ -1005,6 +1005,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     }
     else if (SRV_DATA->last_cmt_write_csm_idx < SRV_DATA->last_write_csm_idx) {
         fprintf(log_fp, "There are not-committed write requests; so wait\n");
+        fprintf(log_fp, "Request ID: %"PRIu64"\n", request->hdr.id);
         ep->wait_for_idx = SRV_DATA->last_write_csm_idx;
         memcpy(ep->last_read_request, request, wc->byte_len - 40);
         return;
@@ -2119,6 +2120,7 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
     int rc;
     ep->wait_for_idx = 0;
     client_req_t *request = (client_req_t*)ep->last_read_request;
+    fprintf(log_fp, "Request ID: %"PRIu64"\n", request->hdr.id);
     
     /* Create reply */
     client_rep_t *reply = (client_rep_t*)IBDEV->ud_send_buf;
