@@ -48,6 +48,8 @@ char* global_mgid;
 #define SRV_DATA ((dare_server_data_t*)dare_ib_device->udata)
 #define CLT_DATA ((dare_client_data_t*)dare_ib_device->udata)
 
+#define BILLION 1000000000L 
+
 struct ibv_wc *wc_array;
 
 /* ================================================================== */
