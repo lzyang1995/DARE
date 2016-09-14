@@ -880,12 +880,12 @@ handle_messages:
 
         if (read_flag) {
             /* Read requests */
-            //info_wtime(log_fp, "Handle %"PRIu16" read requests\n", rd_wr_count);
+            fprintf(log_fp, "Handle %"PRIu16" read requests\n", rd_wr_count);
             type = handle_csm_read_requests(wc_array, rd_wr_count);
         }
         else {
             /* Write requests */
-            //info_wtime(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
+            fprintf(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
             type = handle_csm_write_requests(wc_array, rd_wr_count);
         }
         /* Rearm */
