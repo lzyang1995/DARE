@@ -69,7 +69,7 @@ Distributed Computing (HPDC’15)
 default --loop, not --trace
 
 for example: ./kvs_trace --loop --put -s 128 -o throughput
-./kvs_trace -s 64 -o throughput
+./kvs_trace -s 128 -o throughput
 
 Remember to #define or #undef in both dare_server.c and dare_ibv_rc.c
 
