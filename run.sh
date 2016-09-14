@@ -36,7 +36,7 @@ do
 	sleep 2
 done
 
-sleep 180
+sleep 60
 #start the client on the nineth machine. 
 ssh -f 10.22.1.9 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
 
