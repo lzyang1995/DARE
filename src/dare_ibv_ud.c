@@ -918,6 +918,8 @@ uint64_t ticks[1000];
 int measure_count = 0;
 #endif 
 
+
+struct timespec verify_leadership_start, verify_leadership_end;
 /** 
  * Handle together a set of CSM READ requests
  */
@@ -940,14 +942,18 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
 #ifdef READ_BENCH    
     HRT_GET_TIMESTAMP(SRV_DATA->t2);
 #endif    
+    clock_gettime(CLOCK_MONOTONIC, &verify_leadership_start);
     rc = rc_verify_leadership(&leader);
     if (0 != rc) {
         error_return(MSG_ERROR, log_fp, "Cannot verify leadership\n");
     }
     if (0 == leader) {
-        /* I'm not the leader */
+        fprintf(log_fp, "I'm not the leader\n");
         return CSM_READ;
     }
+    clock_gettime(CLOCK_MONOTONIC, &verify_leadership_end);
+    uint64_t diff = BILLION * (verify_leadership_end.tv_sec - verify_leadership_start.tv_sec) + verify_leadership_end.tv_nsec - verify_leadership_start.tv_nsec;
+    fprintf(log_fp, "rc_verify_leadership time = %llu nanoseconds\n", (long long unsigned int) diff);
     //HRT_GET_TIMESTAMP(SRV_DATA->t2);
     
     for (i = 0; i < read_count; i++) {
