@@ -541,7 +541,7 @@ log_append_entry( dare_log_t* log,
     log->end += log_entry_len(entry);
 
     //text(log_fp, "APPENDED ENTRY [%s]: ", (entry->type == CSM) ? "CSM" : (entry->type == CONFIG) ? "CONFIG" : (entry->type == HEAD) ? "HEAD" : "NOOP");
-    TEXT_PRINT_LOG(log_fp, log);
+    //TEXT_PRINT_LOG(log_fp, log);
     
     return idx;
 }
