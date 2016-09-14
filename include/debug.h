@@ -51,7 +51,7 @@
 
 #endif
 
-#ifdef DEBUG
+#ifndef DEBUG
 #define debug(stream, fmt, ...) do {\
     struct timeval _debug_tv;\
     gettimeofday(&_debug_tv,NULL);\
