@@ -880,7 +880,7 @@ handle_messages:
 
         if (read_flag) {
             /* Read requests */
-            fprintf(log_fp, "Handle %"PRIu16" read requests\n", rd_wr_count);
+            //info_wtime(log_fp, "Handle %"PRIu16" read requests\n", rd_wr_count);
             type = handle_csm_read_requests(wc_array, rd_wr_count);
         }
         else {
@@ -932,7 +932,7 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
         /* Ignore requests */
         return MSG_NONE;
     }
-    //info_wtime(log_fp, "RECEIVED %"PRIu16" Read Requests\n", read_count);
+    fprintf(log_fp, "RECEIVED %"PRIu16" Read Requests\n", read_count);
                 
     /* Server needs to verify if it's still the leader; 
     do it once for all read request -> higher throughput */
@@ -989,14 +989,14 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 #if 1
     /* Check the status of the last write request  */
     if (ep->wait_for_idx != 0) {
-        /* Read request already waiting for a write request */
+        fprintf(log_fp, "Read request already waiting for a write request\n");
         if (ep->wait_for_idx > SRV_DATA->last_cmt_write_csm_idx) {
             /* Write request not committed yet */
             return;
         }
     }
     else if (SRV_DATA->last_cmt_write_csm_idx < SRV_DATA->last_write_csm_idx) {
-        /* There are not-committed write requests; so wait */
+        fprintf(log_fp, "There are not-committed write requests; so wait\n");
         ep->wait_for_idx = SRV_DATA->last_write_csm_idx;
         memcpy(ep->last_read_request, request, wc->byte_len - 40);
         return;
