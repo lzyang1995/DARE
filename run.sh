@@ -44,7 +44,7 @@ client_current=9
 while [ $total -le $client_num ]
 do
 	ip="10.22.1.${client_current}"
-	ssh -f ${ip} "cd ${bin_path}; ./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output} -i ${total}"
+	ssh -f ${ip} "cd ${bin_path}; ulimit -c unlimited; ./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output} -i ${total}"
 	client_current=`expr $client_current - 1`
 	if [ $client_current == 0 ]
 	then
