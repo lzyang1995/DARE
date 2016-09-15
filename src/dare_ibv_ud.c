@@ -1100,10 +1100,12 @@ handle_one_csm_write_request( struct ibv_wc *wc, client_req_t *request )
 #endif    
     
     /* Find the endpoint that send this request */
-    dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
+    //dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
+    dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, request->hdr.clt_id);
     if (ep ==  NULL) {
-        /* No ep with this LID; create a new one */
+        fprint(log_fp, "No ep with this LID; create a new one\n");
         ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
+        fprint(log_fp, "New client\n");
 //info_wtime(log_fp, "New client\n");        
 #ifdef HISTO_BATCHING
         /* #client++ -> print histogram info for previous number of clients
@@ -1156,8 +1158,9 @@ handle_one_csm_write_request( struct ibv_wc *wc, client_req_t *request )
 #endif    
     /* Append new entry */  
     SRV_DATA->last_write_csm_idx = log_append_entry(SRV_DATA->log, 
-            SID_GET_TERM(SRV_DATA->ctrl_data->sid), request->hdr.id, 
-            wc->slid, CSM, &request->cmd);
+            SID_GET_TERM(SRV_DATA->ctrl_data->sid), request->hdr.id,
+            request->hdr.clt_id, CSM, &request->cmd);
+            //wc->slid, CSM, &request->cmd);
 #ifdef WRITE_BENCH   
     if (measure_count == 999) {
         info(log_fp, "Adding %"PRIu64" bytes to the log\n", 
