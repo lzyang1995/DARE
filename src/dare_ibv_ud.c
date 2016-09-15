@@ -1103,9 +1103,9 @@ handle_one_csm_write_request( struct ibv_wc *wc, client_req_t *request )
     //dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
     dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, request->hdr.clt_id);
     if (ep ==  NULL) {
-        fprint(log_fp, "No ep with this LID; create a new one\n");
+        fprintf(log_fp, "No ep with this LID; create a new one\n");
         ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
-        fprint(log_fp, "New client\n");
+        fprintf(log_fp, "New client\n");
 //info_wtime(log_fp, "New client\n");        
 #ifdef HISTO_BATCHING
         /* #client++ -> print histogram info for previous number of clients
