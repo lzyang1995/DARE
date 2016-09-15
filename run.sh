@@ -39,11 +39,21 @@ done
 sleep 60
 #start the client on the nineth machine. 
 ssh -f 10.22.1.9 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
+ssh -f 10.22.1.8 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
+ssh -f 10.22.1.7 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
+ssh -f 10.22.1.6 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
+ssh -f 10.22.1.5 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
+ssh -f 10.22.1.4 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
 
-sleep 5
+sleep 10
 
 #kill the client process
 ssh 10.22.1.9 "killall -2 clt_test"
+ssh 10.22.1.8 "killall -2 clt_test"
+ssh 10.22.1.7 "killall -2 clt_test"
+ssh 10.22.1.6 "killall -2 clt_test"
+ssh 10.22.1.5 "killall -2 clt_test"
+ssh 10.22.1.4 "killall -2 clt_test"
 
 #kill all the servers
 current=1
