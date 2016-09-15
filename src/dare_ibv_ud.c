@@ -668,7 +668,7 @@ ud_send_message( ud_ep_t *ud_ep, uint32_t len )
     struct ibv_send_wr wr;
     struct ibv_send_wr *bad_wr = NULL;
 
-    //debug(log_fp, "Sending UD message to server with LID=%"PRIu16"\n", ud_ep->lid);
+    fprintf(log_fp, "Sending UD message to server with LID=%"PRIu16"\n", ud_ep->lid);
     if (len > mtu_value(IBDEV->mtu)) {
         debug(log_fp, "Cannot send more than %"PRIu32" bytes\n", 
               mtu_value(IBDEV->mtu));
