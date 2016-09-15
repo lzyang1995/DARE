@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
                 break;
             
             case 'i':
-                client_id = optarg;
+                client_id = (uint16_t)atoi(optarg);
                 break;
             
             case 'l':
