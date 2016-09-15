@@ -41,6 +41,7 @@ void usage( char *prog )
             "\t-t <trace>                               (trace file)\n"
             "\t-o <output>                              (output file)\n"
             "\t-l <log>                                 (log file)\n",
+            "\t-i <id>                                  (client id)\n",
             "\t-m <mgid>                                (Global Multicast ID)\n.",
             prog);
 }
