@@ -78,6 +78,7 @@ int main(int argc, char* argv[])
             {"perc", required_argument, 0, 'p'},
             {"size", required_argument, 0, 's'},
             {"trace", required_argument, 0, 't'},
+            {"ID", required_argument, 0, 'i'},
             {"output", required_argument, 0, 'o'},
             {"log", required_argument, 0, 'l'},
             {"MGID",required_argument, 0,'m'},
