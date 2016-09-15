@@ -1508,7 +1508,7 @@ hb_timeout()
 static void
 start_election()
 {
-    if (data.config.idx != 0)
+    //if (data.config.idx != 0)
         //sleep(5); // leader does not sleep
     
     int rc, i;
