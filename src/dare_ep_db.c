@@ -34,9 +34,13 @@ dare_ep_t* ep_search( struct rb_root *root, const uint16_t lid )
     {
         dare_ep_t *ep = container_of(node, dare_ep_t, node);
 
-        if (lid < ep->ud_ep.lid)
+        /*if (lid < ep->ud_ep.lid)
             node = node->rb_left;
         else if (lid > ep->ud_ep.lid)
+            node = node->rb_right;*/
+        if (lid < ep->ud_ep.clt_id)
+            node = node->rb_left;
+        else if (lid > ep->ud_ep.clt_id)
             node = node->rb_right;
         else
             return ep;
@@ -54,9 +58,13 @@ dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid, client_req_t *re
         dare_ep_t *this = container_of(*new, dare_ep_t, node);
         
         parent = *new;
-        if (lid < this->ud_ep.lid)
+        /*if (lid < this->ud_ep.lid)
             new = &((*new)->rb_left);
         else if (lid > this->ud_ep.lid)
+            new = &((*new)->rb_right);*/
+        if (request->hdr.clt_id < this->ud_ep.clt_id)
+            new = &((*new)->rb_left);
+        else if (request->hdr.clt_id > this->ud_ep.clt_id)
             new = &((*new)->rb_right);
         else
             return NULL;
@@ -64,6 +72,7 @@ dare_ep_t* ep_insert( struct rb_root *root, const uint16_t lid, client_req_t *re
     
     /* Create new rr */
     ep = (dare_ep_t*)malloc(sizeof(dare_ep_t));
+    ep->ud_ep.clt_id = request->hdr.clt_id;
     ep->ud_ep.lid = lid;
     ep->last_req_id = 0;
     ep->cid_idx = 0;
