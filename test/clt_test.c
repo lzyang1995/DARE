@@ -28,6 +28,8 @@
 
 extern char* global_mgid;
 
+uint16_t client_id;
+
 void usage( char *prog )
 {
     printf("Usage: %s [OPTIONS]\n"
@@ -116,6 +118,10 @@ int main(int argc, char* argv[])
                 
             case 'o':
                 input.output = optarg;
+                break;
+            
+            case 'i':
+                client_id = optarg;
                 break;
             
             case 'l':
