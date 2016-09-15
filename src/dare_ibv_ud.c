@@ -1031,7 +1031,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     
     /* Send reply */
     uint32_t len = sizeof(client_rep_t) + reply->data.len;
-    fprintf(log_fp, "send message over UD to %"PRIu16"\n", ep->ud_ep.lid);
+    //fprintf(log_fp, "send message over UD to %"PRIu16"\n", ep->ud_ep.lid);
     rc = ud_send_message(&ep->ud_ep, len);
     if (0 != rc) {
         error(log_fp, "Cannot send message over UD to %"PRIu16"\n", 
