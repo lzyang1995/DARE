@@ -51,7 +51,7 @@ do
 		client_current=9
 	fi
 	total=`expr $total + 1`
-	sleep 2
+	#sleep 2
 done
 
 sleep 10
