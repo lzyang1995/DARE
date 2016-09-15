@@ -37,23 +37,33 @@ do
 done
 
 sleep 60
-#start the client on the nineth machine. 
-ssh -f 10.22.1.9 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
-ssh -f 10.22.1.8 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
-ssh -f 10.22.1.7 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
-ssh -f 10.22.1.6 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
-ssh -f 10.22.1.5 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
-ssh -f 10.22.1.4 "cd ${bin_path};./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
+#start the clients.
+total=1
+client_num=$2
+client_current=9
+while [ $total -le $client_num ]
+do
+	ip="10.22.1.${client_current}"
+	ssh -f ${ip} "cd ${bin_path}; ./clt_test -m ${dgid} --loop -p 50 -t ${kvsfile} -o ${client_output}"
+	client_current=`expr $client_current - 1`
+	if [ $client_current == 0 ]
+	then
+		client_current=9
+	fi
+	total=`expr $total + 1`
+	sleep 2
+done
 
 sleep 10
 
-#kill the client process
-ssh 10.22.1.9 "killall -2 clt_test"
-ssh 10.22.1.8 "killall -2 clt_test"
-ssh 10.22.1.7 "killall -2 clt_test"
-ssh 10.22.1.6 "killall -2 clt_test"
-ssh 10.22.1.5 "killall -2 clt_test"
-ssh 10.22.1.4 "killall -2 clt_test"
+#kill all the clients
+current=1
+while [ $current -lt 10 ]
+do
+	ip="10.22.1.${current}"
+	ssh ${ip} "killall -2 clt_test"
+	current=`expr $current + 1`
+done
 
 #kill all the servers
 current=1
