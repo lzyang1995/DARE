@@ -69,8 +69,6 @@ struct dare_client_data_t {
 };
 typedef struct dare_client_data_t dare_client_data_t;
 
-extern uint16_t client_id;
-
 /* ================================================================== */
 
 int dare_client_init( dare_client_input_t *input );
