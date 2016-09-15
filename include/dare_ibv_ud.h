@@ -82,7 +82,8 @@ struct rc_ack_t {
 };
 typedef struct rc_ack_t rc_ack_t;
 
-extern char* global_mgid; 
+extern char* global_mgid;
+extern uint16_t client_id;
 
 /* ================================================================== */ 
 
