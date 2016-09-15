@@ -43,6 +43,7 @@ extern dare_ib_device_t *dare_ib_device;
 
 /* global_mgid is an IPV6 multicast address */
 char* global_mgid;
+uint16_t client_id;
 
 #define IBDEV dare_ib_device
 #define SRV_DATA ((dare_server_data_t*)dare_ib_device->udata)
