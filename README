@@ -81,4 +81,3 @@ Do the following things in two files: dare_server.c, dare_ibv_rc.c
 2. ACK of D
 Do the following things in two files: dare_server.c, dare_ibv_rc.c
 只保留TEST_CONSENSUS_LATENCY_NEW和RDTSC的define，将其他的都undef掉
-
