@@ -74,6 +74,6 @@ do
 	current=`expr $current + 1`
 done
 
-ssh 10.22.1.1 "awk '{ sum += \$1; n++ } END { if (n > 0) print sum / n; }' ${bin_path}/new_consensus_latency_0"
+#ssh 10.22.1.1 "awk '{ sum += \$1; n++ } END { if (n > 0) print sum / n; }' ${bin_path}/new_consensus_latency_0"
 
 exit
