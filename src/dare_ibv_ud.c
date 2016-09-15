@@ -989,7 +989,8 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     int rc;
     
     /* Find the ep that send this request */
-    dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
+    //dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, wc->slid);
+    dare_ep_t *ep = ep_search(&SRV_DATA->endpoints, request->hdr.clt_id);
     if (ep == NULL) {
         /* No ep with this LID; create a new one */
         ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
