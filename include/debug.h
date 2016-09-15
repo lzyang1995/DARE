@@ -117,7 +117,7 @@
 
 #endif
 
-#ifndef DEBUG
+#ifdef DEBUG
 #define dump_bytes(stream, addr, len, header) do { \
     uint32_t _i; \
     uint8_t *bytes = (uint8_t*)addr; \
