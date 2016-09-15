@@ -1955,6 +1955,7 @@ int ud_create_clt_request()
     
     /* Set request id */
     hdr->id = ++IBDEV->request_id;
+    hdr->clt_id = client_id;
     
     /* Read CMD type: CSM_WRITE, CSM_READ, DOWNSIZE */
     bytes_read = fread(&hdr->type, 1, 1, CLT_DATA->trace_fp);
