@@ -53,6 +53,7 @@ struct ud_ep_t {
 #endif
     uint32_t qpn;
     struct ibv_ah *ah;
+    uint16_t clt_id;
 };
 typedef struct ud_ep_t ud_ep_t;
 
