@@ -28,7 +28,7 @@
 
 extern char* global_mgid;
 
-uint16_t client_id;
+extern uint16_t client_id;
 
 void usage( char *prog )
 {
