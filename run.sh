@@ -18,7 +18,7 @@ do
 	current=`expr $current + 1`
 done
 
-ssh -f 10.22.1.1 "cd ${bin_path}; ./srv_test -m ${dgid} -s ${num} -i 0"
+ssh -f 10.22.1.1 "cd ${bin_path}; ulimit -c unlimited; ./srv_test -m ${dgid} -s ${num} -i 0"
 
 #start the servers
 total=1
