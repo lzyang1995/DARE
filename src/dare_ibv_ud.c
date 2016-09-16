@@ -2162,8 +2162,6 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
 {
     int rc;
     ep->wait_for_idx = 0;
-    struct timespec tv;
-    clock_gettime(CLOCK_MONOTONIC, &tv);
     client_req_t *request = (client_req_t*)ep->last_read_request;
     
 
