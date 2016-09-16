@@ -23,8 +23,8 @@
 /* For immediate event scheduling */
 #define NOW 0.000000001
 
-#define MAX_CLIENT_COUNT 130
-#define MAX_SERVER_COUNT 129
+#define MAX_CLIENT_COUNT 112
+#define MAX_SERVER_COUNT 111
 
 #define PAGE_SIZE 4096
 
