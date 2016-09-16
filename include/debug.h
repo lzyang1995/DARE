@@ -12,7 +12,7 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#define TEST_CONSENSUS_LATENCY_CHENG
+//#define TEST_CONSENSUS_LATENCY_CHENG
 
 #include <stdio.h>
 #include <errno.h>
