@@ -1315,7 +1315,12 @@ polling()
 #else
     if (IS_LEADER) {
         /* Try to commit new log entries */
+        struct timespec start, end;
+        clock_gettime(CLOCK_MONOTONIC, &start);
         commit_new_entries();
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        uint64_t diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+        fprintf(lzyang_fp_ack, "commit_new_entries = %llu nanoseconds\n", (long long unsigned int) diff);
     }
     else {
         /* Poll for non SM log entries (CONFIG, HEAD...) */
@@ -1324,7 +1329,12 @@ polling()
 #endif
         
     /* Apply new committed entries */
+    struct timespec start, end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
     apply_committed_entries();
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    uint64_t diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+    fprintf(lzyang_fp_ack, "apply_committed_entries = %llu nanoseconds\n", (long long unsigned int) diff);
     
     if (IS_CANDIDATE) {
         /* Check the number of votes */
