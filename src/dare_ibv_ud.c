@@ -865,7 +865,7 @@ get_message:
 		r->key.id = ud_hdr->id;
 		r->start_time = tv;
 		HASH_ADD(hh, records, key, sizeof(record_key_t), r);
-        	fprintf(log_fp, "Client ID: %"PRIu16", Request ID: %"PRIu64"\n", ud_hdr->clt_id, ud_hdr->id);
+        	//fprintf(log_fp, "Client ID: %"PRIu16", Request ID: %"PRIu64"\n", ud_hdr->clt_id, ud_hdr->id);
         }
 
         if (MSG_NONE == prev_type) {
