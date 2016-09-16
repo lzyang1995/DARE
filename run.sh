@@ -14,7 +14,7 @@ client_output="output"
 while [ $current -lt 10 ]
 do
 	ip="10.22.1.${current}"
-	ssh ${ip} "cd ${bin_path};cd ..;git pull;make"
+	ssh ${ip} "cd ${bin_path};cd ..;git pull;make clean;make"
 	current=`expr $current + 1`
 done
 
