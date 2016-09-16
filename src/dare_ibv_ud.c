@@ -2178,7 +2178,7 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
 	clock_gettime(CLOCK_MONOTONIC, &end_time);
 	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
 	//fprintf(log_fp, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
-	fprintf(read_lat, "Slow %llu\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
+	fprintf(read_lat, "Slow %llu\n", (long long unsigned int) diff);
     }
     
     /* Create reply */
