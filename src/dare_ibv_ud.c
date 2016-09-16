@@ -45,6 +45,8 @@ extern dare_ib_device_t *dare_ib_device;
 char* global_mgid;
 uint16_t client_id;
 
+record_t *records = NULL;
+
 #define IBDEV dare_ib_device
 #define SRV_DATA ((dare_server_data_t*)dare_ib_device->udata)
 #define CLT_DATA ((dare_client_data_t*)dare_ib_device->udata)
@@ -938,6 +940,18 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
         return MSG_NONE;
     }
     fprintf(log_fp, "RECEIVED %"PRIu16" Read Requests\n", read_count);
+    struct timespec tv;
+    clock_gettime(CLOCK_MONOTONIC, &tv);
+    for (i = 0; i < read_count; i++) {
+	client_req_t *req = (client_req_t*)(IBDEV->ud_recv_bufs[read_wcs[i].wr_id] + 40);
+	record_t *r = NULL;
+	r = (record_t*)malloc(sizeof(record_t));
+	memset(r, 0, sizeof(record_t));
+	r->key.client_id = req->hdr.clt_id;
+	r->key.id = req->hdr.id;
+	r->start_time = tv;
+	HASH_ADD(hh, records, key, sizeof(record_key_t), r);
+    }
                 
     /* Server needs to verify if it's still the leader; 
     do it once for all read request -> higher throughput */
@@ -945,7 +959,7 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
 #ifdef READ_BENCH    
     HRT_GET_TIMESTAMP(SRV_DATA->t2);
 #endif    
-    clock_gettime(CLOCK_MONOTONIC, &verify_leadership_start);
+    //clock_gettime(CLOCK_MONOTONIC, &verify_leadership_start);
     rc = rc_verify_leadership(&leader);
     if (0 != rc) {
         error_return(MSG_ERROR, log_fp, "Cannot verify leadership\n");
@@ -954,9 +968,9 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
         fprintf(log_fp, "I'm not the leader\n");
         return CSM_READ;
     }
-    clock_gettime(CLOCK_MONOTONIC, &verify_leadership_end);
-    uint64_t diff = BILLION * (verify_leadership_end.tv_sec - verify_leadership_start.tv_sec) + verify_leadership_end.tv_nsec - verify_leadership_start.tv_nsec;
-    fprintf(log_fp, "rc_verify_leadership time = %llu nanoseconds\n", (long long unsigned int) diff);
+    //clock_gettime(CLOCK_MONOTONIC, &verify_leadership_end);
+    //uint64_t diff = BILLION * (verify_leadership_end.tv_sec - verify_leadership_start.tv_sec) + verify_leadership_end.tv_nsec - verify_leadership_start.tv_nsec;
+    //fprintf(log_fp, "rc_verify_leadership time = %llu nanoseconds\n", (long long unsigned int) diff);
     //HRT_GET_TIMESTAMP(SRV_DATA->t2);
     
     for (i = 0; i < read_count; i++) {
@@ -1007,14 +1021,25 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     }
     else if (SRV_DATA->last_cmt_write_csm_idx < SRV_DATA->last_write_csm_idx) {
         fprintf(log_fp, "There are not-committed write requests; so wait\n");
-        struct timespec tv;
-        clock_gettime(CLOCK_REALTIME, &tv);
-        fprintf(log_fp, "[Request ID: %"PRIu64", Client ID: %"PRIu16"] %lu.%lu\n", request->hdr.id, request->hdr.clt_id, tv.tv_sec, tv.tv_nsec);
         ep->wait_for_idx = SRV_DATA->last_write_csm_idx;
         memcpy(ep->last_read_request, request, wc->byte_len - 40);
         return;
     }
 #endif
+    
+    record_t l, *p = NULL;
+    l.key.client_id = request->hdr.clt_id;
+    l.key.id = request->hdr.id;
+    memset(&l, 0, sizeof(record_t));
+    HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
+    if (p)
+    {
+	struct timespec end_time;
+	clock_gettime(CLOCK_MONOTONIC, &end_time);
+	uint64_t diff = BILLION * (end_time.tv_sec - l.start_time.tv_sec) + end_time.tv_nsec - l.start_time.tv_nsec;
+	fprintf(log_fp, "found [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
+    }
+
 
     /* Create reply */
     client_rep_t *reply = (client_rep_t*)IBDEV->ud_send_buf;

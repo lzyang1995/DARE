@@ -22,6 +22,7 @@
 #include <dare_config.h>
 #include <dare_ep_db.h>
 #include <define.h>
+#include <uthash.h>
 
 #define REQ_MAJORITY 13
 
@@ -81,6 +82,21 @@ struct rc_ack_t {
 	uint8_t idx;
 };
 typedef struct rc_ack_t rc_ack_t;
+
+typedef struct {
+  uint16_t client_id;
+  uint64_t id;
+} record_key_t;
+
+typedef struct {
+    record_key_t key;
+
+    /* ... other data ... */
+    struct timespec start_time;
+    //struct timespec end_time;
+
+    UT_hash_handle hh;
+} record_t;
 
 extern char* global_mgid;
 extern uint16_t client_id;
