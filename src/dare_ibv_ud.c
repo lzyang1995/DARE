@@ -950,6 +950,7 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
 	r->key.client_id = req->hdr.clt_id;
 	r->key.id = req->hdr.id;
 	r->start_time = tv;
+	fprintf(log_fp, "[Request ID: %"PRIu64", Client ID: %"PRIu16"]\n", req->hdr.id, req->hdr.clt_id);
 	HASH_ADD(hh, records, key, sizeof(record_key_t), r);
     }
                 
@@ -1028,9 +1029,9 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 #endif
     
     record_t l, *p = NULL;
+    memset(&l, 0, sizeof(record_t));
     l.key.client_id = request->hdr.clt_id;
     l.key.id = request->hdr.id;
-    memset(&l, 0, sizeof(record_t));
     HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
     if (p)
     {
