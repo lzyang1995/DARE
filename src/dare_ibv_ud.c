@@ -892,7 +892,7 @@ handle_messages:
         }
         else {
             /* Write requests */
-            fprintf(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
+            //fprintf(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
             type = handle_csm_write_requests(wc_array, rd_wr_count);
         }
         /* Rearm */
@@ -2055,11 +2055,11 @@ int ud_create_clt_request()
             csm_req->cmd.len = bytes_read * sizeof(kvs_cmd_t);
             len += csm_req->cmd.len;
             
-            fprintf(log_fp, "\nTrace cmd: [%s] %s key=%s; data len=%"PRIu16"\n", 
+            /*fprintf(log_fp, "\nTrace cmd: [%s] %s key=%s; data len=%"PRIu16"\n", 
                 (hdr->type == CSM_READ) ? "READ" : "WRITE", 
                 (kvs_cmd->type == KVS_PUT) ? "PUT" : 
                 (kvs_cmd->type == KVS_GET) ? "GET" : "RM", 
-                kvs_cmd->key, kvs_cmd->len);
+                kvs_cmd->key, kvs_cmd->len);*/
             
             /* Read possible data */
             if (len + kvs_cmd->len > mtu_value(IBDEV->mtu)) {
@@ -2146,7 +2146,7 @@ send_clt_request( uint32_t len )
     /* Send request */
     //ud_ep->lid = 0;
     if (0 != ud_ep->lid) {
-        fprintf(log_fp, "There is a known leader\n");
+        //fprintf(log_fp, "There is a known leader\n");
         rc = ud_send_message(ud_ep, len);
         if (0 != rc) {
             error_return(1, log_fp, "Cannot send message over UD "
@@ -2154,7 +2154,7 @@ send_clt_request( uint32_t len )
         }
     }
     else {
-        fprintf(log_fp, "No leader known\n");
+        //fprintf(log_fp, "No leader known\n");
         rc = mcast_send_message(len);
         if (0 != rc) {
             error_return(1, log_fp, "Cannot send message over mcast\n");
