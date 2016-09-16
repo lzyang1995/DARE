@@ -21,7 +21,6 @@
 #define MAJORITY_OF_C
 #define IBV_POST_SEND
 
-
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
@@ -85,6 +84,7 @@ int hb_timeout_flag;
 uint64_t latest_hb_received;
 
 unsigned long long g_timerfreq;
+#define BILLION 1000000000L
 
 #define IS_NONE \
     ( (SID_GET_IDX(data.ctrl_data->sid) == data.config.idx) && \
