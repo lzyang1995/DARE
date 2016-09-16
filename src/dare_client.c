@@ -32,6 +32,9 @@
 #endif
 
 #define MEASURE_COUNT 1000
+
+#define FIRST_WRITES 5
+
 //#define MEASURE_COUNT 3
 unsigned long long g_timerfreq;
 uint64_t ticks[MEASURE_COUNT];
@@ -57,6 +60,8 @@ int loop_first_req_done;
 long int first_op_fp;
 long int second_op_fp;
 ev_tstamp last_srand;
+
+int first_ops = 0;
 
 /* ================================================================== */
 /* libEV events */
@@ -350,6 +355,11 @@ get_first_trace_cmd_cb( EV_P_ ev_timer *w, int revents )
             //if (percentage > 100) dare_client_shutdown();
         }
         n = rand() % 100 + 1;
+        if (first_ops < FIRST_WRITES)
+        {
+            n  = data.input->first_op_perc - 1;
+            first_ops++;
+        }   
         if (n <= data.input->first_op_perc) {
         //if (n <= percentage) {
             first++;
