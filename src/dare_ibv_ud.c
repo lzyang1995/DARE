@@ -1134,7 +1134,7 @@ handle_one_csm_write_request( struct ibv_wc *wc, client_req_t *request )
     if (ep ==  NULL) {
         fprintf(log_fp, "No ep with this LID; create a new one\n");
         ep = ep_insert(&SRV_DATA->endpoints, wc->slid, request);
-        fprintf(log_fp, "New client\n");
+        fprintf(log_fp, "New client: %"PRIu16"\n", request->hdr.clt_id);
 //info_wtime(log_fp, "New client\n");        
 #ifdef HISTO_BATCHING
         /* #client++ -> print histogram info for previous number of clients
