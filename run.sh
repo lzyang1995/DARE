@@ -36,7 +36,7 @@ do
 	sleep 2
 done
 
-sleep 60
+sleep 120
 #start the clients.
 total=1
 client_num=$2
