@@ -71,6 +71,9 @@ default --loop, not --trace
 for example: ./kvs_trace --loop --put -s 128 -o throughput
 ./kvs_trace -s 128 -o throughput
 
+Please remember that if the leader bathces 6 write requests (which are sent from 6 clients) and every request is 128 bytes in size
+then it could possibly exceed RDMA maximum transport size.
+
 Remember to #define or #undef in both dare_server.c and dare_ibv_rc.c
 
 --------------------------------------------------------------------------------------------------------------------------
