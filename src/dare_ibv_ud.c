@@ -852,6 +852,10 @@ get_message:
         if (IBV_SERVER != IBDEV->ulp_type) goto handle_messages;
         /* Check the type of the operation */
         type = ud_hdr->type;
+        if (CSM_READ == type)
+        {
+        	fprintf(log_fp, "Type: %"PRIu8", Client ID: %"PRIu16", Request ID: %"PRIu64"\n", ud_hdr->type, ud_hdr->clt_id, ud_hdr->id);
+        }
         if (MSG_NONE == prev_type) {
             prev_type = type;
         }
@@ -952,7 +956,7 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
 	r->key.client_id = req->hdr.clt_id;
 	r->key.id = req->hdr.id;
 	r->start_time = tv;
-	//fprintf(log_fp, "[Request ID: %"PRIu64", Client ID: %"PRIu16"]\n", req->hdr.id, req->hdr.clt_id);
+	fprintf(log_fp, "[Request ID: %"PRIu64", Client ID: %"PRIu16"]\n", req->hdr.id, req->hdr.clt_id);
 	HASH_ADD(hh, records, key, sizeof(record_key_t), r);
     }
                 
