@@ -36,7 +36,7 @@ do
 	sleep 2
 done
 
-sleep 120
+sleep 180
 #start the clients.
 total=1
 client_num=$2
@@ -54,7 +54,7 @@ do
 	#sleep 2
 done
 
-sleep 10
+sleep 15
 
 #kill all the clients
 current=1
