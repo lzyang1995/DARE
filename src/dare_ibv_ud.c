@@ -852,10 +852,22 @@ get_message:
         if (IBV_SERVER != IBDEV->ulp_type) goto handle_messages;
         /* Check the type of the operation */
         type = ud_hdr->type;
+
         if (CSM_READ == type)
         {
+		struct timespec tv;
+		clock_gettime(CLOCK_MONOTONIC, &tv);
+		client_req_t* clt_req = (client_req_t*)ud_hdr;
+		record_t *r = NULL;
+		r = (record_t*)malloc(sizeof(record_t));
+		memset(r, 0, sizeof(record_t));
+		r->key.client_id = ud_hdr->clt_id;
+		r->key.id = ud_hdr->id;
+		r->start_time = tv;
+		HASH_ADD(hh, records, key, sizeof(record_key_t), r);
         	fprintf(log_fp, "Type: %"PRIu8", Client ID: %"PRIu16", Request ID: %"PRIu64"\n", ud_hdr->type, ud_hdr->clt_id, ud_hdr->id);
         }
+
         if (MSG_NONE == prev_type) {
             prev_type = type;
         }
@@ -946,7 +958,7 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
         return MSG_NONE;
     }
     //fprintf(log_fp, "RECEIVED %"PRIu16" Read Requests\n", read_count);
-    struct timespec tv;
+    /*struct timespec tv;
     clock_gettime(CLOCK_MONOTONIC, &tv);
     for (i = 0; i < read_count; i++) {
 	client_req_t *req = (client_req_t*)(IBDEV->ud_recv_bufs[read_wcs[i].wr_id] + 40);
@@ -958,7 +970,7 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
 	r->start_time = tv;
 	fprintf(log_fp, "[Request ID: %"PRIu64", Client ID: %"PRIu16"]\n", req->hdr.id, req->hdr.clt_id);
 	HASH_ADD(hh, records, key, sizeof(record_key_t), r);
-    }
+    }*/
                 
     /* Server needs to verify if it's still the leader; 
     do it once for all read request -> higher throughput */
@@ -1292,7 +1304,7 @@ handle_message_from_client( struct ibv_wc *wc, ud_hdr_t *ud_hdr )
             text_wtime(log_fp, "CLIENT READ REQUEST %"PRIu64" (lid%"PRIu16")\n", 
                         ud_hdr->id, wc->slid);
             /* Handle request */
-	    struct timespec tv;
+	    /*struct timespec tv;
 	    clock_gettime(CLOCK_MONOTONIC, &tv);
 	    client_req_t* clt_req = (client_req_t*)ud_hdr;
 	    record_t *r = NULL;
@@ -1301,7 +1313,7 @@ handle_message_from_client( struct ibv_wc *wc, ud_hdr_t *ud_hdr )
 	    r->key.client_id = clt_req->hdr.clt_id;
 	    r->key.id = clt_req->hdr.id;
 	    r->start_time = tv;
-	    HASH_ADD(hh, records, key, sizeof(record_key_t), r);
+	    HASH_ADD(hh, records, key, sizeof(record_key_t), r);*/
 
             handle_one_csm_read_request(wc, (client_req_t*)ud_hdr);
             break;
