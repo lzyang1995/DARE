@@ -46,6 +46,7 @@ char* global_mgid;
 uint16_t client_id;
 
 record_t *records = NULL;
+FILE* read_lat;
 
 #define IBDEV dare_ib_device
 #define SRV_DATA ((dare_server_data_t*)dare_ib_device->udata)
@@ -123,6 +124,7 @@ mcast_send_message( uint32_t len );
 int ud_init( uint32_t receive_count )
 {
     int rc;
+    read_lat = fopen("read_lat.txt", "w");
 
     rc = ud_prerequisite(receive_count);
     if (0 != rc) {
@@ -1038,7 +1040,8 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 	struct timespec end_time;
 	clock_gettime(CLOCK_MONOTONIC, &end_time);
 	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
-	fprintf(log_fp, "Normal [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
+	//fprintf(read_lat, "Normal [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
+	fprintf(read_lat, "Normal %llu\n", (long long unsigned int) diff);
     }
 
 
@@ -1173,7 +1176,8 @@ handle_one_csm_write_request( struct ibv_wc *wc, client_req_t *request )
             print_rc_info();
             return;
         }
-        rc = ud_send_clt_reply(wc->slid, request->hdr.id, CSM);
+        //rc = ud_send_clt_reply(wc->slid, request->hdr.id, CSM);
+	rc = ud_send_clt_reply(request->hdr.clt_id, request->hdr.id, CSM);
         if (0 != rc) {
             error(log_fp, "Cannot send client reply\n");
         }
@@ -1284,6 +1288,17 @@ handle_message_from_client( struct ibv_wc *wc, ud_hdr_t *ud_hdr )
             text_wtime(log_fp, "CLIENT READ REQUEST %"PRIu64" (lid%"PRIu16")\n", 
                         ud_hdr->id, wc->slid);
             /* Handle request */
+	    struct timespec tv;
+	    clock_gettime(CLOCK_MONOTONIC, &tv);
+	    client_req_t* clt_req = (client_req_t*)ud_hdr;
+	    record_t *r = NULL;
+	    r = (record_t*)malloc(sizeof(record_t));
+	    memset(r, 0, sizeof(record_t));
+	    r->key.client_id = clt_req->hdr.clt_id;
+	    r->key.id = clt_req->hdr.id;
+	    r->start_time = tv;
+	    HASH_ADD(hh, records, key, sizeof(record_key_t), r);
+
             handle_one_csm_read_request(wc, (client_req_t*)ud_hdr);
             break;
         }
@@ -2155,9 +2170,23 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
     int rc;
     ep->wait_for_idx = 0;
     struct timespec tv;
-    clock_gettime(CLOCK_REALTIME, &tv);
+    clock_gettime(CLOCK_MONOTONIC, &tv);
     client_req_t *request = (client_req_t*)ep->last_read_request;
-    fprintf(log_fp, "[Request ID: %"PRIu64", Client ID: %"PRIu16"] %lu.%lu\n", request->hdr.id, request->hdr.clt_id, tv.tv_sec, tv.tv_nsec);
+    
+
+    record_t l, *p = NULL;
+    memset(&l, 0, sizeof(record_t));
+    l.key.client_id = request->hdr.clt_id;
+    l.key.id = request->hdr.id;
+    HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
+    if (p)
+    {
+	struct timespec end_time;
+	clock_gettime(CLOCK_MONOTONIC, &end_time);
+	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
+	//fprintf(read_lat, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
+	fprintf(read_lat, "Slow %llu\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
+    }
     
     /* Create reply */
     client_rep_t *reply = (client_rep_t*)IBDEV->ud_send_buf;
