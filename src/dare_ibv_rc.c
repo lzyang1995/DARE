@@ -2972,7 +2972,7 @@ empty_completion_queue( uint8_t server_id,
         }
 #endif 
 #ifdef lzyang 
-        if(!lzyang_flag)
+        /*if(!lzyang_flag)
         {
             lzyang_flag = 1;
             if(clock_gettime(CLOCK_MONOTONIC, &lzyang_start) != 0)
@@ -2987,7 +2987,7 @@ empty_completion_queue( uint8_t server_id,
             {
                 fprintf(lzyang_fp_ack, "Fail to get the now timestamp\n");
             }
-        }
+        }*/
 #endif 
 
 #ifdef BREAKDOWN_600NS
@@ -3572,7 +3572,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
 #endif
 
 #ifdef lzyang
-                        if(lzyang_flag == 1)
+                        /*if(lzyang_flag == 1)
                         {
                             fprintf(lzyang_fp_ack, "0\t\tp%"PRIu8"\t\tLR_UPDATE_LOG\t\t%"PRIu64"\n", idx, server->cached_end_offset);
                         }
@@ -3580,7 +3580,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                         {
                             uint64_t lzyang_interval = 1e9 * (lzyang_now.tv_sec - lzyang_start.tv_sec) + (lzyang_now.tv_nsec - lzyang_start.tv_nsec);
                             fprintf(lzyang_fp_ack, "%"PRIu64"\t\tp%"PRIu8"\t\tLR_UPDATE_LOG\t\t%"PRIu64"\n", lzyang_interval, idx, server->cached_end_offset);
-                        }
+                        }*/
 #endif
                         break;
                     case 2:
@@ -3620,7 +3620,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
 #endif
 
 #ifdef lzyang
-                if(lzyang_flag == 1)
+                /*if(lzyang_flag == 1)
                 {
                     fprintf(lzyang_fp_ack, "0\t\tp%"PRIu8"\t\tLR_UPDATE_END\t\t%"PRIu64"\n", idx, server->cached_end_offset);
                 }
@@ -3628,7 +3628,7 @@ handle_lr_work_completion( uint8_t idx, int wc_rc )
                 {
                     uint64_t lzyang_interval = 1e9 * (lzyang_now.tv_sec - lzyang_start.tv_sec) + (lzyang_now.tv_nsec - lzyang_start.tv_nsec);
                     fprintf(lzyang_fp_ack, "%"PRIu64"\t\tp%"PRIu8"\t\tLR_UPDATE_END\t\t%"PRIu64"\n", lzyang_interval, idx, server->cached_end_offset);
-                }   
+                } */  
 #endif
 #ifdef TEST_CONSENSUS_LATENCY_NEW
                 if(in_new_consensus_latency == 1)
