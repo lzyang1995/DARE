@@ -213,7 +213,7 @@ int in_new_consensus_latency;
 uint64_t overall_latency[ARRAY_LEN];
 uint64_t fist_ackd_latency[ARRAY_LEN];
 uint64_t fist_ackc_latency[ARRAY_LEN];
-int count__ = -500;
+int count__ = -40000;
 #endif
 
 #ifdef BREAKDOWN_300NS
