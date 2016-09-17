@@ -177,8 +177,11 @@ void ep_dp_reply_read_req( struct rb_root *root, uint64_t idx )
             verify_leadership = 1;
         }
         if (ep->wait_for_idx < idx) {
-            //fprintf(stdout, "When new entries are applied, the leader verifies if there are pending read requests\n");
+            fprintf(stdout, "the leader verifies if there are pending read requests, idx is %"PRIu64"\n", idx);
             ud_clt_answer_read_request(ep);
+        }
+        else {
+            fprintf(stdout, "ep->wait_for_idx is %"PRIu64", but idx is %"PRIu64"\n", ep->wait_for_idx, idx);
         }
     }
 }
