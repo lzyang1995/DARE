@@ -42,7 +42,7 @@ struct dare_cid_t {
     uint8_t state;
     uint8_t pad[1];
     uint32_t bitmask;
-};
+}__attribute__((packed));
 typedef struct dare_cid_t dare_cid_t;
 
 static int
