@@ -12,7 +12,7 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-//#define TEST_CONSENSUS_LATENCY_CHENG
+#define TEST_CONSENSUS_LATENCY_CHENG
 
 #include <stdio.h>
 #include <errno.h>
@@ -51,7 +51,7 @@
 
 #endif
 
-#ifdef DEBUG
+#ifndef DEBUG
 #define debug(stream, fmt, ...) do {\
     struct timeval _debug_tv;\
     gettimeofday(&_debug_tv,NULL);\
