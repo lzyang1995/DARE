@@ -21,6 +21,9 @@
 #define MAJORITY_OF_C
 #define IBV_POST_SEND
 
+#define OVERALL
+#undef OVERALL
+
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
@@ -2054,12 +2057,17 @@ commit_new_entries()
         ack_c_num = 0;
         HRT_GET_TIMESTAMP(t11);
 #endif
+
+#ifdef OVERALL
         struct timespec write_remote_logs_start, write_remote_logs_end;
 	clock_gettime(CLOCK_MONOTONIC, &write_remote_logs_start);
+#endif
         rc = dare_ib_write_remote_logs(1);
+#ifdef OVERALL
 	clock_gettime(CLOCK_MONOTONIC, &write_remote_logs_end);
 	uint64_t diff = BILLION * (write_remote_logs_end.tv_sec - write_remote_logs_start.tv_sec) + write_remote_logs_end.tv_nsec - write_remote_logs_start.tv_nsec;
-	fprintf(lzyang_fp_ack, "dare_ib_write_remote_logs = %llu nanoseconds\n", (long long unsigned int) diff);
+	fprintf(lzyang_fp_ack, "dare_ib_write_remote_logs = %llu nanoseconds\n", (long long unsigned int) diff);\
+#endif
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
 
