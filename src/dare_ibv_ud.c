@@ -15,7 +15,7 @@
 #define RDTSC
 
 #define HASH
-#undef HASH
+//#undef HASH
 
 #include <stdio.h>
 #include <stdlib.h>
