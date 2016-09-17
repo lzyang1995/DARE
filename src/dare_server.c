@@ -25,7 +25,7 @@
 #undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
 #undef TEST_CALL_NUM
-#undef TEST_CONSENSUS_LATENCY_NEW
+//#undef TEST_CONSENSUS_LATENCY_NEW
 #undef TEST_OTHER_LATENCY_NEW
 #undef BREAKDOWN_300NS
 #undef FIXED_LEADER
@@ -52,6 +52,7 @@
 #include <define.h>
 #include <time.h>
 
+FILE *write_remote_logs;
 /* 
  * HB period (seconds)
  * election timeout range (microseconds)
@@ -306,6 +307,7 @@ poll_cb( EV_P_ ev_idle *w, int revents );
 ev_tstamp start_ts;
 int dare_server_init( dare_server_input_t *input )
 {   
+    FILE *write_remote_logs = fopen("write_remote_logs.txt", "w");
     int rc;
     
     /* Initialize data fields to zero */
@@ -2052,7 +2054,12 @@ commit_new_entries()
         ack_c_num = 0;
         HRT_GET_TIMESTAMP(t11);
 #endif
+        struct timespec write_remote_logs_start, write_remote_logs_end;
+	clock_gettime(CLOCK_MONOTONIC, &write_remote_logs_start);
         rc = dare_ib_write_remote_logs(1);
+	clock_gettime(CLOCK_MONOTONIC, &write_remote_logs_end);
+	uint64_t diff = BILLION * (write_remote_logs_end.tv_sec - write_remote_logs_start.tv_sec) + write_remote_logs_end.tv_nsec - write_remote_logs_start.tv_nsec;
+	fprintf(lzyang_fp_ack, "dare_ib_write_remote_logs = %llu nanoseconds\n", (long long unsigned int) diff);
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
 
