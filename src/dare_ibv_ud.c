@@ -14,6 +14,9 @@
 #define lzyang
 #define RDTSC
 
+#define HASH
+#undef HASH
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -852,7 +855,7 @@ get_message:
         if (IBV_SERVER != IBDEV->ulp_type) goto handle_messages;
         /* Check the type of the operation */
         type = ud_hdr->type;
-
+#ifdef HASH
         if (CSM_READ == type)
         {
 		struct timespec tv;
@@ -867,7 +870,7 @@ get_message:
 		HASH_ADD(hh, records, key, sizeof(record_key_t), r);
         	//fprintf(log_fp, "Client ID: %"PRIu16", Request ID: %"PRIu64"\n", ud_hdr->clt_id, ud_hdr->id);
         }
-
+#endif 
         if (MSG_NONE == prev_type) {
             prev_type = type;
         }
@@ -1032,7 +1035,8 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
         return;
     }
 #endif
-    
+
+#ifdef HASH    
     record_t l, *p = NULL;
     memset(&l, 0, sizeof(record_t));
     l.key.client_id = request->hdr.clt_id;
@@ -1046,7 +1050,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 	//fprintf(log_fp, "Normal [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
 	fprintf(read_lat, "Normal %llu\n", (long long unsigned int) diff);
     }
-
+#endif
 
     /* Create reply */
     client_rep_t *reply = (client_rep_t*)IBDEV->ud_send_buf;
@@ -2163,8 +2167,8 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
     int rc;
     ep->wait_for_idx = 0;
     client_req_t *request = (client_req_t*)ep->last_read_request;
-    
 
+#ifdef HASH    
     record_t l, *p = NULL;
     memset(&l, 0, sizeof(record_t));
     l.key.client_id = request->hdr.clt_id;
@@ -2178,6 +2182,7 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
 	//fprintf(log_fp, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
 	fprintf(read_lat, "Slow %llu\n", (long long unsigned int) diff);
     }
+#endif
     
     /* Create reply */
     client_rep_t *reply = (client_rep_t*)IBDEV->ud_send_buf;
