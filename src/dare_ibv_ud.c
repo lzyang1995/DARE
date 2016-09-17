@@ -1289,7 +1289,7 @@ handle_message_from_client( struct ibv_wc *wc, ud_hdr_t *ud_hdr )
                 break;
             }
             text_wtime(log_fp, "CLIENT READ REQUEST %"PRIu64" (clt_id%"PRIu16")\n", 
-                        ud_hdr->id, ud->clt_id);
+                        ud_hdr->id, ud_hdr->clt_id);
             /* Handle request */
 
             handle_one_csm_read_request(wc, (client_req_t*)ud_hdr);
