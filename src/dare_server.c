@@ -2066,7 +2066,7 @@ commit_new_entries()
 #ifdef OVERALL
 	clock_gettime(CLOCK_MONOTONIC, &write_remote_logs_end);
 	uint64_t diff = BILLION * (write_remote_logs_end.tv_sec - write_remote_logs_start.tv_sec) + write_remote_logs_end.tv_nsec - write_remote_logs_start.tv_nsec;
-	fprintf(lzyang_fp_ack, "dare_ib_write_remote_logs = %llu nanoseconds\n", (long long unsigned int) diff);\
+	fprintf(lzyang_fp_ack, "dare_ib_write_remote_logs = %llu nanoseconds\n", (long long unsigned int) diff);
 #endif
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
