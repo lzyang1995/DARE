@@ -539,6 +539,7 @@ log_append_entry( dare_log_t* log,
     log->tail = log->end;
     /* Set new end */
     log->end += log_entry_len(entry);
+    fprintf(log_fp, "APPENDED ENTRY: log_entry_len is %d, sizeof(dare_log_entry_t) is %d, entry->data.cmd.len is %d", log_entry_len(entry), sizeof(dare_log_entry_t), entry->data.cmd.len);
 
     //text(log_fp, "APPENDED ENTRY [%s]: ", (entry->type == CSM) ? "CSM" : (entry->type == CONFIG) ? "CONFIG" : (entry->type == HEAD) ? "HEAD" : "NOOP");
     //TEXT_PRINT_LOG(log_fp, log);
