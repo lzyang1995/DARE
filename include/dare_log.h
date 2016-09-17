@@ -43,7 +43,7 @@ struct dare_log_entry_t {
         dare_cid_t cid;
         uint64_t head;
     } data; /* The entry data */
-};
+}__attribute__((packed));
 typedef struct dare_log_entry_t dare_log_entry_t;
 
 /* Log entry determinant (idx, term, offset) */
