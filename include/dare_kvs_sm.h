@@ -19,7 +19,8 @@
 #include <define.h>
 
 #define DEFAULT_KVS_SIZE 1024
-#define KEY_SIZE 64
+//#define KEY_SIZE 64
+#define KEY_SIZE 8
 
 /* KVS commands */
 #define KVS_PUT 1
