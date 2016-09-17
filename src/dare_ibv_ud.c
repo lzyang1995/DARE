@@ -911,7 +911,7 @@ handle_messages:
         }
         else {
             /* Write requests */
-            //fprintf(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
+            fprintf(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
             type = handle_csm_write_requests(wc_array, rd_wr_count);
         }
         /* Rearm */
@@ -1029,7 +1029,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
         }
     }
     else if (SRV_DATA->last_cmt_write_csm_idx < SRV_DATA->last_write_csm_idx) {
-        //fprintf(log_fp, "There are not-committed write requests; so wait\n");
+        fprintf(log_fp, "There are not-committed write requests; so wait for %"PRIu64"\n", wait_for_idx);
         ep->wait_for_idx = SRV_DATA->last_write_csm_idx;
         memcpy(ep->last_read_request, request, wc->byte_len - 40);
         return;
