@@ -55,7 +55,6 @@
 #include <define.h>
 #include <time.h>
 
-FILE *write_remote_logs;
 /* 
  * HB period (seconds)
  * election timeout range (microseconds)
@@ -310,7 +309,6 @@ poll_cb( EV_P_ ev_idle *w, int revents );
 ev_tstamp start_ts;
 int dare_server_init( dare_server_input_t *input )
 {   
-    FILE *write_remote_logs = fopen("write_remote_logs.txt", "w");
     int rc;
     
     /* Initialize data fields to zero */
