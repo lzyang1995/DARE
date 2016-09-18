@@ -21,6 +21,13 @@
 #define UINT32_T uint32_t
 #define UINT64_T uint64_t
 
+#define NANOSECOND_TIMER_START(stream, fmt, ...) do {\
+    struct timespec _debug_tv;\
+    clock_gettime(CLOCK_REALTIME,&_debug_tv);\
+    fprintf(stream, "[%lu:%lu] " fmt, _debug_tv.tv_sec, _debug_tv.tv_nsec, ##__VA_ARGS__); \
+    fflush(stream); \
+} while(0)
+
 #define HRT_CALIBRATE(freq) do {  \
   static volatile HRT_TIMESTAMP_T t1, t2; \
   static volatile UINT64_T elapsed_ticks, min = (UINT64_T)(~0x1); \
