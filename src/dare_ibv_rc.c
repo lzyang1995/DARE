@@ -1661,12 +1661,11 @@ update_remote_logs()
             }
             if (!init) {
                 ssn++;  // increase ssn to avoid past work completions
-                TIMER_START(log_fp, "### Log update (%"PRIu64")\n", ssn);
+                TIMER_START(log_fp, "### Log update (%"PRIu64") write log\n", ssn);
                 //info_wtime(log_fp, "### Log update (%"PRIu64")\n", ssn);
                 init = 1;
             }
-            TIMER_INFO(log_fp, "   (p%"PRIu8": write log[%"PRIu64":%"PRIu64"])\n", 
-                        i, *remote_end, SRV_DATA->log->end);
+            //TIMER_INFO(log_fp, "   (p%"PRIu8": write log[%"PRIu64":%"PRIu64"])\n", i, *remote_end, SRV_DATA->log->end);
             //info(log_fp, "   # (p%"PRIu8": write log[%"PRIu64":%"PRIu64"])\n", 
             //        i, *remote_end, SRV_DATA->log->end);
             /* Set remote offset */
@@ -1697,7 +1696,7 @@ update_remote_logs()
             /* Step II: Update the remote end offsets */
             if (!init) {
                 ssn++;  // increase ssn to avoid past work completions
-                TIMER_START(log_fp, "### Log update (%"PRIu64")\n", ssn);
+                TIMER_START(log_fp, "### Log update (%"PRIu64") end\n", ssn);
                 init = 1;
 //HRT_GET_TIMESTAMP(SRV_DATA->t1);
 //HRT_GET_TIMESTAMP(SRV_DATA->t2);
@@ -1707,7 +1706,7 @@ update_remote_logs()
             /* Set the remote end offset to the cached end offset */
             remote_end = &SRV_DATA->ctrl_data->log_offsets[i].end;
             *remote_end = server->cached_end_offset;
-            TIMER_INFO(log_fp, "   (p%"PRIu8".end=%"PRIu64")\n", i, *remote_end);
+            //TIMER_INFO(log_fp, "   (p%"PRIu8".end=%"PRIu64")\n", i, *remote_end);
             //info(log_fp, "   # (p%"PRIu8
             //    ": update end offset to %"PRIu64")\n", i, *remote_end);
             /* Set send fields */
@@ -2047,8 +2046,7 @@ info(log_fp, "%s\n", buf);
             offset = (uint32_t) (offsetof(dare_log_t, commit));
             init = 1;
         }
-        TIMER_INFO(log_fp, "   (p%"PRIu8".commit=%"PRIu64")\n", 
-                    i, *remote_commit);
+        //TIMER_INFO(log_fp, "   (p%"PRIu8".commit=%"PRIu64")\n", i, *remote_commit);
         
         /* Set remote offset */
         rm.raddr = ep->rc_ep.rmt_mr[LOG_QP].raddr + offset;
