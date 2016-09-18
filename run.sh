@@ -54,7 +54,7 @@ do
 	#sleep 2
 done
 
-sleep 9
+sleep 20
 
 #kill all the clients
 current=1
