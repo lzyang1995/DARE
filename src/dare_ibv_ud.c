@@ -911,7 +911,7 @@ handle_messages:
         }
         else {
             /* Write requests */
-            fprintf(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
+            //fprintf(log_fp, "Handle %"PRIu16" write requests\n", rd_wr_count);
             type = handle_csm_write_requests(wc_array, rd_wr_count);
         }
         /* Rearm */
