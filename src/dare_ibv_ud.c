@@ -860,7 +860,6 @@ get_message:
         {
 		struct timespec tv;
 		clock_gettime(CLOCK_MONOTONIC, &tv);
-		client_req_t* clt_req = (client_req_t*)ud_hdr;
 		record_t *r = NULL;
 		r = (record_t*)malloc(sizeof(record_t));
 		memset(r, 0, sizeof(record_t));
