@@ -1323,7 +1323,7 @@ int rc_verify_leadership( int *leader )
             posted_sends[i] = -1;  // insuccess
             continue;
         }
-        //text(log_fp, "   (p%"PRIu8")\n", i);
+        text(log_fp, "   (p%"PRIu8")\n", i);
         
         /* Set address and key of remote memory region */
         rm.raddr = ep->rc_ep.rmt_mr[CTRL_QP].raddr + offset;
