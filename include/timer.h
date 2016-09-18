@@ -21,7 +21,7 @@
 #define UINT32_T uint32_t
 #define UINT64_T uint64_t
 
-#define NANOSECOND_TIMER_START(stream, fmt, ...) do {\
+#define NANOSECOND_TIMER(stream, fmt, ...) do {\
     struct timespec _debug_tv;\
     clock_gettime(CLOCK_REALTIME,&_debug_tv);\
     fprintf(stream, "[%lu:%lu] " fmt, _debug_tv.tv_sec, _debug_tv.tv_nsec, ##__VA_ARGS__); \
