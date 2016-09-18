@@ -48,8 +48,9 @@ extern dare_ib_device_t *dare_ib_device;
 char* global_mgid;
 uint16_t client_id;
 
+extern FILE* lzyang_fp_ack;
+
 record_t *records = NULL;
-extern FILE* write_remote_logs;
 
 #define IBDEV dare_ib_device
 #define SRV_DATA ((dare_server_data_t*)dare_ib_device->udata)
@@ -1047,7 +1048,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 	clock_gettime(CLOCK_MONOTONIC, &end_time);
 	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
 	//fprintf(log_fp, "Normal [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
-	fprintf(write_remote_logs, "Normal %llu\n", (long long unsigned int) diff);
+	fprintf(lzyang_fp_ack, "Normal %llu\n", (long long unsigned int) diff);
     }
 #endif
 
@@ -2179,7 +2180,7 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
 	clock_gettime(CLOCK_MONOTONIC, &end_time);
 	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
 	//fprintf(log_fp, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
-	fprintf(write_remote_logs, "Slow %llu\n", (long long unsigned int) diff);
+	fprintf(lzyang_fp_ack, "Slow %llu\n", (long long unsigned int) diff);
     }
 #endif
     
