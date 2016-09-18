@@ -1030,7 +1030,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     }
     else if (SRV_DATA->last_cmt_write_csm_idx < SRV_DATA->last_write_csm_idx) {
         ep->wait_for_idx = SRV_DATA->last_write_csm_idx;
-        fprintf(log_fp, "There are not-committed write requests; so wait for %"PRIu64"\n", ep->wait_for_idx);
+        //fprintf(log_fp, "There are not-committed write requests; so wait for %"PRIu64"\n", ep->wait_for_idx);
         memcpy(ep->last_read_request, request, wc->byte_len - 40);
         return;
     }
