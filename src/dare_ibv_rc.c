@@ -21,6 +21,9 @@
 #define IBV_POST_SEND
 #define wangcheng
 
+#define break_write
+#undef break_write
+
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
 #undef BREAKDOWN_600NS
@@ -1662,7 +1665,9 @@ update_remote_logs()
             if (!init) {
                 ssn++;  // increase ssn to avoid past work completions
                 TIMER_START(log_fp, "### Log update (%"PRIu64") write log\n", ssn);
+#ifdef break_write
                 NANOSECOND_TIMER(log_fp, "### Log update (write log)\n");
+#endif
                 //info_wtime(log_fp, "### Log update (%"PRIu64")\n", ssn);
                 init = 1;
             }
@@ -1698,7 +1703,9 @@ update_remote_logs()
             if (!init) {
                 ssn++;  // increase ssn to avoid past work completions
                 TIMER_START(log_fp, "### Log update (%"PRIu64") end\n", ssn);
+#ifdef break_write
                 NANOSECOND_TIMER(log_fp, "### Log update (end)\n");
+#endif
                 init = 1;
 //HRT_GET_TIMESTAMP(SRV_DATA->t1);
 //HRT_GET_TIMESTAMP(SRV_DATA->t2);
@@ -2045,7 +2052,9 @@ info(log_fp, "%s\n", buf);
             ssn++;  // increase ssn to avoid past work completions
             TIMER_START(log_fp, "Lazily update commit offsets (%"PRIu64
                         ")\n", ssn);
+#ifdef break_write
             NANOSECOND_TIMER(log_fp, "Lazily update commit offsets\n");
+#endif
             offset = (uint32_t) (offsetof(dare_log_t, commit));
             init = 1;
         }
