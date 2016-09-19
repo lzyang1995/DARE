@@ -2953,9 +2953,9 @@ empty_completion_queue( uint8_t server_id,
         clock_gettime(CLOCK_MONOTONIC , &ibv_poll_cq_end);
         uint64_t diff = BILLION * (ibv_poll_cq_end.tv_sec - ibv_poll_cq_start.tv_sec) + ibv_poll_cq_end.tv_nsec - ibv_poll_cq_start.tv_nsec;
         if (ne == 0)
-            fprintf(lzyang_fp_ack, "none %llu", (long long unsigned int) diff);
+            fprintf(lzyang_fp_ack, "none %llu\n", (long long unsigned int) diff);
         else
-            fprintf(lzyang_fp_ack, "%d %llu", ne, (long long unsigned int) diff);
+            fprintf(lzyang_fp_ack, "%d %llu\n", ne, (long long unsigned int) diff);
 
 
 #ifdef TEST_CALL_NUM
