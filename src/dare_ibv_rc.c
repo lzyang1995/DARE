@@ -2946,9 +2946,16 @@ empty_completion_queue( uint8_t server_id,
         }
 #endif
 #endif
-
+        struct timespec ibv_poll_cq_start, ibv_poll_cq_end;
+        clock_gettime(CLOCK_MONOTONIC , &ibv_poll_cq_start);
         ne = ibv_poll_cq(IBDEV->rc_cq[qp_id], IBDEV->rc_cqe, 
                         IBDEV->rc_wc_array);
+        clock_gettime(CLOCK_MONOTONIC , &ibv_poll_cq_end);
+        uint64_t diff = BILLION * (ibv_poll_cq_end.tv_sec - ibv_poll_cq_start.tv_sec) + ibv_poll_cq_end.tv_nsec - ibv_poll_cq_start.tv_nsec;
+        if (ne == 0)
+            fprintf(lzyang_fp_ack, "none %llu", (long long unsigned int) diff);
+        else
+            fprintf(lzyang_fp_ack, "%d %llu", ne, (long long unsigned int) diff);
 
 
 #ifdef TEST_CALL_NUM
