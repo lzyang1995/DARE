@@ -980,7 +980,27 @@ handle_csm_read_requests( struct ibv_wc *read_wcs, uint16_t read_count )
     //uint64_t diff = BILLION * (verify_leadership_end.tv_sec - verify_leadership_start.tv_sec) + verify_leadership_end.tv_nsec - verify_leadership_start.tv_nsec;
     //fprintf(lzyang_fp_ack, "rc_verify_leadership %llu\n", (long long unsigned int) diff);
     //HRT_GET_TIMESTAMP(SRV_DATA->t2);
-    
+
+#ifdef HASH
+    struct timespec end_time;
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
+    record_t l;
+    memset(&l, 0, sizeof(record_t));
+    for (i = 0; i < read_count; i++)
+    {
+    	record_t *p = NULL;
+    	client_req_t* req = (client_req_t*)(IBDEV->ud_recv_bufs[read_wcs[i].wr_id] + 40);
+    	l.key.client_id = req->hdr.clt_id;
+    	l.key.id = req->hdr.id;
+    	HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
+    	if (p)
+    	{
+    		uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
+    		fprintf(lzyang_fp_ack, "Normal %llu\n", (long long unsigned int) diff);
+    	}
+    }
+#endif
+
     for (i = 0; i < read_count; i++) {
         handle_one_csm_read_request(&read_wcs[i], 
             (client_req_t*)(IBDEV->ud_recv_bufs[read_wcs[i].wr_id] + 40));
@@ -1032,22 +1052,6 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
         //fprintf(log_fp, "There are not-committed write requests; so wait for %"PRIu64"\n", ep->wait_for_idx);
         memcpy(ep->last_read_request, request, wc->byte_len - 40);
         return;
-    }
-#endif
-
-#ifdef HASH    
-    record_t l, *p = NULL;
-    memset(&l, 0, sizeof(record_t));
-    l.key.client_id = request->hdr.clt_id;
-    l.key.id = request->hdr.id;
-    HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
-    if (p)
-    {
-	struct timespec end_time;
-	clock_gettime(CLOCK_MONOTONIC, &end_time);
-	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
-	//fprintf(log_fp, "Normal [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
-	fprintf(lzyang_fp_ack, "Normal %llu\n", (long long unsigned int) diff);
     }
 #endif
 
