@@ -1038,8 +1038,8 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 #ifdef HASH
     struct timespec end_time;
     record_t l;
-    memset(&l, 0, sizeof(record_t));
     clock_gettime(CLOCK_MONOTONIC, &end_time);
+    memset(&l, 0, sizeof(record_t));
     record_t *p = NULL;
     l.key.client_id = request->hdr.clt_id;
     l.key.id = request->hdr.id;
