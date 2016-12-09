@@ -22,7 +22,7 @@
 #define IBV_POST_SEND
 
 #define OVERALL
-//#undef OVERALL
+#undef OVERALL
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
