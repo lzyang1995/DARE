@@ -339,7 +339,7 @@ shutdown:
 static void
 get_first_trace_cmd_cb( EV_P_ ev_timer *w, int revents )
 {
-    int rc;
+    int rc, i;
     uint8_t n;
     static uint64_t first = 0, second = 0;
     static uint8_t percentage = 0;
