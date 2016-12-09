@@ -137,6 +137,7 @@ int dare_client_init( dare_client_input_t *input )
         /* Initialize timer */
         HRT_INIT(g_timerfreq);
     }
+    HRT_INIT(g_timerfreq);
     
     /* Schedule timer event */
     ev_timer_init(&timer_event, init_network_cb, 0., NOW);
