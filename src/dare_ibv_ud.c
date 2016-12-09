@@ -2085,6 +2085,7 @@ int ud_create_clt_request()
    
 send_request:
     /* Send request */
+    HRT_GET_TIMESTAMP(CLT_DATA->t1);
     if (CLT_TYPE_RTRACE == CLT_DATA->input->clt_type) {
 #ifdef RDTSC
         HRT_GET_TIMESTAMP(CLT_DATA->t1);
@@ -2092,6 +2093,7 @@ send_request:
         clock_gettime(CLOCK_MONOTONIC, &(CLT_DATA->t1));
 #endif
     }
+
     return send_clt_request(len);
 }
 

@@ -374,6 +374,15 @@ get_first_trace_cmd_cb( EV_P_ ev_timer *w, int revents )
         error(log_fp, "Cannot reposition file pointer\n");
         dare_client_shutdown();
     }
+
+    if (measure_count == MEASURE_COUNT) {
+        qsort(ticks, MEASURE_COUNT, sizeof(uint64_t), cmpfunc_uint64);
+        for (i = 0; i < MEASURE_COUNT; i++) {
+            fprintf(data.output_fp, "%9.3lf ", HRT_GET_USEC(ticks[i]));
+        }
+        fprintf(data.output_fp, "\n");
+        measure_count = 0;
+    }
       
     /* Get first command in the trace */
     rc = dare_ib_create_clt_request();
@@ -567,6 +576,9 @@ poll_ud()
                 //if (loop_first_req_done) {
                     /* Increase request counter */
                     request_count++;
+                HRT_GET_TIMESTAMP(data.t2);
+                HRT_GET_ELAPSED_TICKS(data.t1, data.t2, &(ticks[measure_count]));
+                measure_count++;
                 //}
                 //else {
                 //    loop_first_req_done = 1;
