@@ -1036,9 +1036,9 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 #endif
 
 #ifdef HASH
-    struct timespec end_time;
+    struct timespec wait_end_time;
     record_t l;
-    clock_gettime(CLOCK_MONOTONIC, &end_time);
+    clock_gettime(CLOCK_MONOTONIC, &wait_end_time);
     memset(&l, 0, sizeof(record_t));
     record_t *p = NULL;
     l.key.client_id = request->hdr.clt_id;
@@ -1046,8 +1046,8 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
     if (p)
     {
-    	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
-    	fprintf(lzyang_fp_ack, "Normal %llu\n", (long long unsigned int) diff);
+    	uint64_t diff1 = BILLION * (wait_end_time.tv_sec - p->start_time.tv_sec) + wait_end_time.tv_nsec - p->start_time.tv_nsec;
+    	//fprintf(lzyang_fp_ack, "Normal %llu\n", (long long unsigned int) diff1);
     }
 #endif
 
@@ -1079,6 +1079,15 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
         info_wtime(log_fp, "Sent %"PRIu32" bytes\n", len);
     }
 #endif
+
+#ifdef HASH
+    struct timespec end_time;
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
+    uint64_t diff2 = BILLION * (end_time.tv_sec - wait_end_time.tv_sec) + end_time.tv_nsec - wait_end_time.tv_nsec;
+    fprintf(lzyang_fp_ack, "Normal: Wait %llu, Process %llu\n", (long long unsigned int) diff1, (long long unsigned int) diff2);
+#endif
+
+
 }
 
 /** 
@@ -2177,11 +2186,11 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
     HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
     if (p)
     {
-	struct timespec end_time;
-	clock_gettime(CLOCK_MONOTONIC, &end_time);
-	uint64_t diff = BILLION * (end_time.tv_sec - p->start_time.tv_sec) + end_time.tv_nsec - p->start_time.tv_nsec;
+	struct timespec wait_end_time;
+	clock_gettime(CLOCK_MONOTONIC, &wait_end_time);
+	uint64_t diff1 = BILLION * (wait_end_time.tv_sec - p->start_time.tv_sec) + wait_end_time.tv_nsec - p->start_time.tv_nsec;
 	//fprintf(log_fp, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
-	fprintf(lzyang_fp_ack, "Slow %llu\n", (long long unsigned int) diff);
+	//fprintf(lzyang_fp_ack, "Slow Wait%llu\n", (long long unsigned int) diff1);
     }
 #endif
     
@@ -2204,6 +2213,15 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
         error(log_fp, "Cannot send message over UD to %"PRIu16"\n", 
                      ep->ud_ep.lid);
     }
+
+#ifdef HASH
+    struct timespec end_time;
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
+    uint64_t diff2 = BILLION * (end_time.tv_sec - wait_end_time.tv_sec) + end_time.tv_nsec - wait_end_time.tv_nsec;
+    //fprintf(log_fp, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
+    fprintf(lzyang_fp_ack, "Slow: Wait %llu, Process %llu\n", (long long unsigned int) diff1, (long long unsigned int) diff2);
+#endif
+
 }
 
 int ud_send_clt_reply( uint16_t lid, uint64_t req_id, uint8_t type )

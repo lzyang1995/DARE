@@ -2064,7 +2064,7 @@ commit_new_entries()
 #ifdef OVERALL
 	clock_gettime(CLOCK_MONOTONIC, &write_remote_logs_end);
 	uint64_t diff = BILLION * (write_remote_logs_end.tv_sec - write_remote_logs_start.tv_sec) + write_remote_logs_end.tv_nsec - write_remote_logs_start.tv_nsec;
-	fprintf(lzyang_fp_ack, "remote %llu\n", (long long unsigned int) diff);
+	fprintf(lzyang_fp_ack, "Consensus %llu\n", (long long unsigned int) diff);
 #endif
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
@@ -2203,11 +2203,13 @@ apply_committed_entries()
     while (log_is_offset_larger(data.log, 
                 data.log->commit, data.log->apply))
     {
-#ifdef FIXED_LEADER
-        if(data.config.idx != 0)
-#else
-        if (!IS_LEADER) 
+
+#ifdef OVERALL
+        struct timespec apply_committed_entries_start, apply_committed_entries_end;
+        clock_gettime(CLOCK_MONOTONIC, &apply_committed_entries_start);
 #endif
+
+        if (!IS_LEADER) 
         {
             //text_wtime(log_fp, "New committed entries ");
             //TEXT_PRINT_LOG(log_fp, data.log);
@@ -2228,11 +2230,7 @@ apply_committed_entries()
             data.log->apply = 0;
             continue;
         }
-#ifdef FIXED_LEADER
-        if(data.config.idx != 0)
-#else
         if (!IS_LEADER)
-#endif
             goto apply_entry;
 
         /* Just the leader... */
@@ -2332,11 +2330,7 @@ apply_committed_entries()
 apply_entry:        
         /* Apply entry */
         if (CSM == entry->type) {
-#ifdef FIXED_LEADER
-            if(data.config.idx != 0)
-#else
             if (!IS_LEADER) 
-#endif
             {
                 if (entry->idx % 10000 == 0) {
                     info_wtime(log_fp, "APPLY LOG ENTRY: (%"PRIu64"; %"PRIu64")\n", 
@@ -2361,15 +2355,16 @@ apply_entry:
 apply_next_entry:        
         /* Advance apply offset */
         data.log->apply += log_entry_len(entry);
+#ifdef OVERALL
+    clock_gettime(CLOCK_MONOTONIC, &apply_committed_entries_end);
+    uint64_t diff = BILLION * (apply_committed_entries_end.tv_sec - apply_committed_entries_start.tv_sec) + apply_committed_entries_end.tv_nsec - apply_committed_entries_start.tv_nsec;
+    fprintf(lzyang_fp_ack, "Process %llu\n", (long long unsigned int) diff);
+#endif
     }
     
     /* When new entries are applied, the leader verifies if there are 
     pending read requests */
-#ifdef FIXED_LEADER
-    if ((old_apply != data.log->apply) && data.config.idx == 0) 
-#else
     if ((old_apply != data.log->apply) && IS_LEADER) 
-#endif
     {
         ep_dp_reply_read_req(&data.endpoints, data.last_cmt_write_csm_idx);
     }
