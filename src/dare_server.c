@@ -22,7 +22,7 @@
 #define IBV_POST_SEND
 
 #define OVERALL
-//#undef OVERALL
+#undef OVERALL
 
 //#undef RDTSC
 #undef TEST_POST_SEND_INTERVAL
@@ -1521,8 +1521,8 @@ hb_timeout()
 static void
 start_election()
 {
-    if (data.config.idx != 0)
-        sleep(5); // leader does not sleep
+    //if (data.config.idx != 0)
+        //sleep(5); // leader does not sleep
     
     int rc, i;
     
