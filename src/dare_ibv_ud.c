@@ -1037,6 +1037,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 
 #ifdef HASH
     struct timespec wait_end_time;
+    uint64_t diff1
     record_t l;
     clock_gettime(CLOCK_MONOTONIC, &wait_end_time);
     memset(&l, 0, sizeof(record_t));
@@ -1046,7 +1047,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
     if (p)
     {
-    	uint64_t diff1 = BILLION * (wait_end_time.tv_sec - p->start_time.tv_sec) + wait_end_time.tv_nsec - p->start_time.tv_nsec;
+    	diff1 = BILLION * (wait_end_time.tv_sec - p->start_time.tv_sec) + wait_end_time.tv_nsec - p->start_time.tv_nsec;
     	//fprintf(lzyang_fp_ack, "Normal %llu\n", (long long unsigned int) diff1);
     }
 #endif
@@ -2180,15 +2181,16 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
 
 #ifdef HASH    
     record_t l, *p = NULL;
+    uint64_t diff1;
+    struct timespec wait_end_time;
     memset(&l, 0, sizeof(record_t));
     l.key.client_id = request->hdr.clt_id;
     l.key.id = request->hdr.id;
     HASH_FIND(hh, records, &l.key, sizeof(record_key_t), p);
     if (p)
     {
-	struct timespec wait_end_time;
 	clock_gettime(CLOCK_MONOTONIC, &wait_end_time);
-	uint64_t diff1 = BILLION * (wait_end_time.tv_sec - p->start_time.tv_sec) + wait_end_time.tv_nsec - p->start_time.tv_nsec;
+	diff1 = BILLION * (wait_end_time.tv_sec - p->start_time.tv_sec) + wait_end_time.tv_nsec - p->start_time.tv_nsec;
 	//fprintf(log_fp, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
 	//fprintf(lzyang_fp_ack, "Slow Wait%llu\n", (long long unsigned int) diff1);
     }
