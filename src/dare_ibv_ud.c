@@ -1037,7 +1037,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
 
 #ifdef HASH
     struct timespec wait_end_time;
-    uint64_t diff1
+    uint64_t diff1;
     record_t l;
     clock_gettime(CLOCK_MONOTONIC, &wait_end_time);
     memset(&l, 0, sizeof(record_t));
