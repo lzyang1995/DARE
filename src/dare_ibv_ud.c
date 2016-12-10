@@ -15,7 +15,7 @@
 #define RDTSC
 
 #define HASH
-//#undef HASH
+#undef HASH
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -2096,7 +2096,11 @@ int ud_create_clt_request()
    
 send_request:
     /* Send request */
+
+#ifdef RESPONSE_TIME
     HRT_GET_TIMESTAMP(CLT_DATA->t1);
+#endif
+    
     if (CLT_TYPE_RTRACE == CLT_DATA->input->clt_type) {
 #ifdef RDTSC
         HRT_GET_TIMESTAMP(CLT_DATA->t1);

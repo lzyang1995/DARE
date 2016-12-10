@@ -137,7 +137,9 @@ int dare_client_init( dare_client_input_t *input )
         /* Initialize timer */
         HRT_INIT(g_timerfreq);
     }
+#ifdef RESPONSE_TIME
     HRT_INIT(g_timerfreq);
+#endif
     
     /* Schedule timer event */
     ev_timer_init(&timer_event, init_network_cb, 0., NOW);
@@ -376,6 +378,7 @@ get_first_trace_cmd_cb( EV_P_ ev_timer *w, int revents )
         dare_client_shutdown();
     }
 
+#ifdef RESPONSE_TIME
     if (measure_count == MEASURE_COUNT) {
         //qsort(ticks, MEASURE_COUNT, sizeof(uint64_t), cmpfunc_uint64);
         for (i = 0; i < MEASURE_COUNT; i++) {
@@ -384,7 +387,8 @@ get_first_trace_cmd_cb( EV_P_ ev_timer *w, int revents )
         //fprintf(data.output_fp, "\n");
         measure_count = 0;
     }
-      
+#endif
+
     /* Get first command in the trace */
     rc = dare_ib_create_clt_request();
     if (rc < 0) {
@@ -577,9 +581,11 @@ poll_ud()
                 //if (loop_first_req_done) {
                     /* Increase request counter */
                     request_count++;
+#ifdef RESPONSE_TIME
                 HRT_GET_TIMESTAMP(data.t2);
                 HRT_GET_ELAPSED_TICKS(data.t1, data.t2, &(ticks[measure_count]));
                 measure_count++;
+#endif
                 //}
                 //else {
                 //    loop_first_req_done = 1;
