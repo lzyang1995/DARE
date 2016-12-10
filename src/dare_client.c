@@ -377,7 +377,7 @@ get_first_trace_cmd_cb( EV_P_ ev_timer *w, int revents )
     }
 
     if (measure_count == MEASURE_COUNT) {
-        qsort(ticks, MEASURE_COUNT, sizeof(uint64_t), cmpfunc_uint64);
+        //qsort(ticks, MEASURE_COUNT, sizeof(uint64_t), cmpfunc_uint64);
         for (i = 0; i < MEASURE_COUNT; i++) {
             fprintf(data.output_fp, "%9.3lf\n", HRT_GET_USEC(ticks[i]));
         }
