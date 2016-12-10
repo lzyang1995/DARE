@@ -116,6 +116,9 @@ uint64_t dare_state;
 FILE *log_fp;
 #ifdef lzyang
 FILE *lzyang_fp_ack;
+FILE *lzyang_fp_writeprocess;
+FILE *lzyang_fp_readinfo;
+FILE *lzyang_fp_writeconsens;
 
 #endif
 
@@ -321,6 +324,9 @@ int dare_server_init( dare_server_input_t *input )
     log_fp = input->log;
 #ifdef lzyang
     lzyang_fp_ack = fopen("./ackinfo", "w");
+    lzyang_fp_writeconsens = fopen("./writeconsens", "w");
+    lzyang_fp_writeprocess = fopen("./writeprocess", "w");
+    lzyang_fp_readinfo = fopen("./readinfo", "w");
 #endif    
 #ifdef TEST_CONSENSUS_LATENCY
     fp_consensus_latency = fopen("./consensus_latency", "w");
@@ -2064,7 +2070,7 @@ commit_new_entries()
 #ifdef OVERALL
 	clock_gettime(CLOCK_MONOTONIC, &write_remote_logs_end);
 	uint64_t diff = BILLION * (write_remote_logs_end.tv_sec - write_remote_logs_start.tv_sec) + write_remote_logs_end.tv_nsec - write_remote_logs_start.tv_nsec;
-	fprintf(lzyang_fp_ack, "Consensus %llu\n", (long long unsigned int) diff);
+	fprintf(lzyang_fp_writeconsens, "Consensus %llu\n", (long long unsigned int) diff);
 #endif
         /* The function above is called only once for a request */
         /* loop_for_commit used to avoid going back through libev before the commit is over */
@@ -2358,7 +2364,7 @@ apply_next_entry:
 #ifdef OVERALL
     clock_gettime(CLOCK_MONOTONIC, &apply_committed_entries_end);
     uint64_t diff = BILLION * (apply_committed_entries_end.tv_sec - apply_committed_entries_start.tv_sec) + apply_committed_entries_end.tv_nsec - apply_committed_entries_start.tv_nsec;
-    fprintf(lzyang_fp_ack, "Process %llu\n", (long long unsigned int) diff);
+    fprintf(lzyang_fp_writeprocess, "Process %llu\n", (long long unsigned int) diff);
 #endif
     }
     

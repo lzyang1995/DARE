@@ -49,6 +49,7 @@ char* global_mgid;
 uint16_t client_id;
 
 extern FILE* lzyang_fp_ack;
+extern FILE* lzyang_fp_readinfo;
 
 record_t *records = NULL;
 
@@ -1085,7 +1086,7 @@ handle_one_csm_read_request( struct ibv_wc *wc, client_req_t *request )
     struct timespec end_time;
     clock_gettime(CLOCK_MONOTONIC, &end_time);
     uint64_t diff2 = BILLION * (end_time.tv_sec - wait_end_time.tv_sec) + end_time.tv_nsec - wait_end_time.tv_nsec;
-    fprintf(lzyang_fp_ack, "Normal: Wait %llu, Process %llu\n", (long long unsigned int) diff1, (long long unsigned int) diff2);
+    fprintf(lzyang_fp_readinfo, "Normal: Wait %llu, Process %llu\n", (long long unsigned int) diff1, (long long unsigned int) diff2);
 #endif
 
 
@@ -2221,7 +2222,7 @@ void ud_clt_answer_read_request(dare_ep_t *ep)
     clock_gettime(CLOCK_MONOTONIC, &end_time);
     uint64_t diff2 = BILLION * (end_time.tv_sec - wait_end_time.tv_sec) + end_time.tv_nsec - wait_end_time.tv_nsec;
     //fprintf(log_fp, "Slow [Request ID: %"PRIu64", Client ID: %"PRIu16"] %llu nanoseconds\n", request->hdr.id, request->hdr.clt_id, (long long unsigned int) diff);
-    fprintf(lzyang_fp_ack, "Slow: Wait %llu, Process %llu\n", (long long unsigned int) diff1, (long long unsigned int) diff2);
+    fprintf(lzyang_fp_readinfo, "Slow: Wait %llu, Process %llu\n", (long long unsigned int) diff1, (long long unsigned int) diff2);
 #endif
 
 }
