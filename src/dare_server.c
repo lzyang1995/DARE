@@ -1240,6 +1240,7 @@ polling()
     }
 
     /* Stop here if not recovered yet */
+    /* sole-leader mode remove this part */
     if (!(dare_state & LOG_RECOVERED))
         return;
 
