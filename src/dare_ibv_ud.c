@@ -15,7 +15,7 @@
 #define RDTSC
 
 #define HASH
-#undef HASH
+//#undef HASH
 
 #define RESPONSE_TIME
 //#undef RESPONSE_TIME
