@@ -13,7 +13,7 @@
 #define lzyang
 
 #define RESPONSE_TIME
-#undef RESPONSE_TIME
+//#undef RESPONSE_TIME
 
 #include <stdlib.h>
 #include <string.h>
